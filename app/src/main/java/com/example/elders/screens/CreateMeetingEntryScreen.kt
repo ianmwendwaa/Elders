@@ -1,123 +1,191 @@
 package com.example.elders.screens
 
-import android.os.Build
-import androidx.annotation.RequiresApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableDoubleStateOf
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardCapitalization
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.LineHeightStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.elders.components.DataInputField
-import com.example.elders.components.textColor
-import com.example.elders.styles.HeadingText
-import com.example.elders.styles.SecondaryHeadingText
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
-@RequiresApi(Build.VERSION_CODES.O)
+data class ContributionData(
+    val contributorsName: String,
+    val contributionAmt: Int
+)
 @Composable
-fun CreateMeetingEntryScreen(){
-    val dateToday = LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
-    var memberName by remember { mutableStateOf("") }
-    var membersContribution by remember { mutableStateOf("") }
-    var emergingIssues by remember { mutableStateOf("") }
+fun LogMeetingDataScreen(){
+    var meetingTitle by remember { mutableStateOf("") }
+    var meetingDate by remember { mutableStateOf("") }
+    var meetingAOB by remember { mutableStateOf("") }
+    var activeMember by remember { mutableStateOf("") }
+    var contributionSliderValue by remember { mutableFloatStateOf(0.5f) }
 
-    Column(modifier = Modifier.padding(start = 20.dp, top = 35.dp, end = 10.dp)
-    ) {
-        HeadingText(text = "Meeting entry for $dateToday")
-
-        SecondaryHeadingText(text = "Contributions:")
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(5.dp)
-        ) {
-            DataInputField("Member name",
-                value = memberName,
-                onValueChange = {
-                    memberName = it
-                },
-                modifier = Modifier.width(180.dp)
-            )
-
-            Spacer(modifier = Modifier.width(3.dp))
-            DataInputField("Amount",
-                value = membersContribution,
-                onValueChange = {
-                    membersContribution = it
-                },
-                acceptNumericalData = true,
-                modifier = Modifier.width(85.dp)
-            )
+    val contributionsList = remember { mutableStateListOf<ContributionData>() }
+    val totalContributions by remember {
+        derivedStateOf {
+            contributionsList.sumOf { it.contributionAmt }
         }
-
-        Spacer(modifier = Modifier.height(15.dp))
-
-        Text(text = "Emerging Issues", color = textColor, fontSize = 16.sp)
-        TextField(
-            value = emergingIssues,
-            onValueChange = {
-                emergingIssues = it
-            },
-            placeholder = {
-                Text(text = "Emerging issues", color = Color.LightGray, fontWeight = FontWeight.SemiBold, fontSize = 16.sp)
-            },
-            textStyle = TextStyle(
-                color = Color.Black,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Normal,
-                fontStyle = FontStyle.Normal
-            ),
-            shape = RoundedCornerShape(8.dp),
-            keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences, keyboardType = KeyboardType.Text),
-            keyboardActions = KeyboardActions(onDone = {
-
-            }),
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color(0xFFF5F5F5),
-                unfocusedContainerColor = Color(0xFFF5F5F5),
-                disabledContainerColor = Color(0xFFF5F5F5),
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-            ),
-            modifier = Modifier.height(250.dp).fillMaxWidth()
-        )
-        Button(
-            onClick = {},
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFFFFB7CE)
-            ),
-            shape = RoundedCornerShape(19.dp),
-            modifier = Modifier.align(Alignment.End)
-        ) {
-            Text("Save data", fontSize = 16.sp, color = Color.White)
-        }
-
     }
+    Column(modifier = Modifier.fillMaxSize()
+        .background(Color.White).verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.spacedBy(3.dp)
+    ) {
+        Spacer(modifier = Modifier.height(30.dp))
+        Card(modifier = Modifier.padding(16.dp).fillMaxWidth()
+            .border(0.1.dp, shape = RoundedCornerShape(10.dp), color = Color.LightGray)
+        ) {
+            Column(modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(5.dp)) {
+                Text(text = "Log Meeting Data", fontWeight = FontWeight.Bold)
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                // Input fields for meeting details (Title, date & AOB)
+                DataInputField(
+                    modifier = Modifier.height(50.dp).fillMaxWidth(),
+                    dataInputLabel = "MEETING TITLE",
+                    value = meetingTitle,
+                    onValueChange = { meetingTitle = it },
+                    acceptStringData = true,
+                    isSingleLine = true
+                )
+
+                DataInputField(
+                    modifier = Modifier.height(50.dp).fillMaxWidth(),
+                    dataInputLabel = "MEETING DATE",
+                    value = meetingDate,
+                    onValueChange = { meetingDate = it },
+                    isSingleLine = true,
+                    acceptStringData = true
+                )
+
+                DataInputField(
+                    modifier = Modifier.height(100.dp).fillMaxWidth(),
+                    dataInputLabel = "AOB",
+                    value = meetingAOB,
+                    onValueChange = { meetingAOB = it },
+                    isSingleLine = false,
+                    acceptStringData = true
+                )
+            }
+        }
+
+        Card(
+            modifier = Modifier.padding(16.dp)
+                .border(0.1.dp, shape = RoundedCornerShape(10.dp), color = Color.Gray)
+        ) {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(7.dp),
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Text(text = "Append Contributions", fontWeight = FontWeight.Bold)
+                DataInputField(
+                    modifier = Modifier.height(50.dp).fillMaxWidth(),
+                    value = activeMember,
+                    onValueChange = { activeMember = it },
+                    dataInputLabel = "SELECT ACTIVE MEMBER"
+                )
+
+                Row(modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween) {
+                    Text(text = "Amount contributed", color = Color.Gray)
+                    Text(text = "Ksh.${contributionSliderValue.toInt()}")
+                }
+
+                Slider(
+                    value = contributionSliderValue,
+                    onValueChange = { contributionSliderValue = it },
+                    steps = 3,
+                    valueRange = 0f..200f
+                )
+
+                Button(onClick = { appendData(contributionsList, activeMember, contributionSliderValue.toInt()) },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(7.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF50C878))
+                ) {
+                    Text("Push Contribution")
+                }
+            }
+        }
+        // Contributions panel list
+        Card(modifier = Modifier.padding(16.dp)
+            .border(0.1.dp, shape = RoundedCornerShape(10.dp), color = Color.Gray)
+        ) {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Row(modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(text = "Appended Contributions")
+                    Text(text = "Total: Ksh.$totalContributions")
+                }
+
+
+
+                Button(onClick = {}, modifier = Modifier
+                    .fillMaxWidth(),
+                    shape = RoundedCornerShape(13.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF008080))
+                ) {
+                    Text(text = "Save meeting data")
+                }
+
+            }
+        }
+    }
+}
+
+@Composable
+fun ContributionsListItem(
+    contributersName: String,
+    contributionAmt: Int
+){
+    // Yes, I know I named it contributee
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(contributersName, fontWeight = FontWeight.SemiBold, color = Color.Gray)
+        Text(text = "Ksh.$contributionAmt", fontWeight = FontWeight.SemiBold, color = Color(0xFF50C878))
+    }
+
+}
+
+@Preview
+@Composable
+fun Previewer(){
+    LogMeetingDataScreen()
+}
+
+private fun appendData(listr: MutableList<ContributionData>, name: String, amt: Int){
+    if (name.isEmpty()) return
+    listr.add(ContributionData(name, amt))
 }

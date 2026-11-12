@@ -31,7 +31,9 @@ import androidx.navigation.NavHost
 import androidx.navigation.NavHostController
 import com.example.elders.R
 import com.example.elders.components.HomeActionsCard
+import com.example.elders.components.TableComponent
 import com.example.elders.models.HomeActions
+import com.example.elders.models.MeetingData
 import com.example.elders.navigation.ROUTE_ADD_NEW_MEMBER
 import com.example.elders.navigation.ROUTE_CREATE_MEETING_ENTRY
 import com.example.elders.navigation.ROUTE_VIEW_MEMBERS
@@ -43,22 +45,27 @@ private val adminActions = listOf<HomeActions>(
     HomeActions(R.drawable.ic_launcher_foreground, "View members", ROUTE_VIEW_MEMBERS),
     HomeActions(R.drawable.ic_launcher_foreground, "Record meeting", ROUTE_CREATE_MEETING_ENTRY),
 )
+
+private val meetingData = listOf<MeetingData>(
+    MeetingData("11/10/2026", 250.00),
+    MeetingData("18/10/2026", 300.00),
+    MeetingData("25/11/2026", 150.00),
+    MeetingData("01/11/2026", 250.00),
+)
 @Composable
 fun HomeScreen(navController: NavHostController){
     val backgroundColor = Color(0xFFF8F9FA)
     Column(
-        modifier = Modifier.fillMaxSize().background(backgroundColor),
+        modifier = Modifier.fillMaxSize().background(backgroundColor).verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ){
         Column (modifier = Modifier
-            .fillMaxSize()
-            .padding(start = 20.dp, top = 35.dp, end = 20.dp, bottom = 20.dp)
-            .verticalScroll(rememberScrollState())
+            .padding(start = 20.dp, top = 45.dp, end = 20.dp, bottom = 20.dp)
         ) {
             HeadingText(text = "Welcome!")
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(15.dp))
 
             // Actions segment
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -95,10 +102,16 @@ fun HomeScreen(navController: NavHostController){
                     }
                 }
             }
-            Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
-                SecondaryHeadingText(text = "Meeting History")
 
+            // Meeting History
+            Spacer(modifier = Modifier.height(15.dp))
+            SecondaryHeadingText(text = "Meeting History")
 
+            TableComponent(
+                listOf("Date", "Total Contribution"),
+                meetingData
+            ) {
+                listOf(it.date, it.contribution.toString())
             }
         }
     }

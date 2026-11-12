@@ -1,5 +1,6 @@
 package com.example.elders.components
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -32,23 +33,24 @@ fun DataInputField(
     onValueChange:(String)-> Unit,
     modifier: Modifier = Modifier,
     acceptNumericalData: Boolean?=null,
-    acceptStringData: Boolean?=null
+    acceptStringData: Boolean?=null,
+    isSingleLine: Boolean?=null
 ){
     Column(horizontalAlignment = Alignment.Start, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(text = dataInputLabel, color = textColor, fontSize = 16.sp)
+        Text(text = dataInputLabel, color = textColor, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
         TextField(
             value = value,
             onValueChange = onValueChange,
-            placeholder = {
-                Text(text = dataInputLabel, color = Color.LightGray, fontWeight = FontWeight.SemiBold, fontSize = 16.sp)
-            },
+//            placeholder = {
+//                Text(text = dataInputLabel, color = Color.LightGray, fontWeight = FontWeight.SemiBold, fontSize = 16.sp)
+//            },
             textStyle = TextStyle(
                 color = Color.Black,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Normal,
                 fontStyle = FontStyle.Normal
             ),
-            modifier = modifier,
+            modifier = modifier.border(0.1.dp, color = Color.LightGray, shape = RoundedCornerShape(8.dp)),
             shape = RoundedCornerShape(8.dp),
             keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences, keyboardType =
                 if (acceptNumericalData == true) KeyboardType.Number else KeyboardType.Unspecified),
@@ -62,7 +64,8 @@ fun DataInputField(
                 focusedIndicatorColor = Color.Transparent, // Hides border on focus
                 unfocusedIndicatorColor = Color.Transparent, // Hides border when idle
             ),
-            singleLine = true
+            singleLine = isSingleLine == true,
+
         )
     }
 }

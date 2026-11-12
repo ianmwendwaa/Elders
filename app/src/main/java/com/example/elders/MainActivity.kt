@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.elders.navigation.NavigationController
+import com.example.elders.screens.LogMeetingDataScreen
 import com.example.elders.ui.theme.EldersTheme
 
 class MainActivity : ComponentActivity() {
@@ -20,7 +21,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             EldersTheme {
-                NavigationController()
+                LogMeetingDataScreen()
             }
         }
     }

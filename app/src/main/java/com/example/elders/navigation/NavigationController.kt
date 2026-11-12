@@ -12,7 +12,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.elders.screens.AddNewMembersScreen
-import com.example.elders.screens.CreateMeetingEntryScreen
+import com.example.elders.screens.LogMeetingDataScreen
 import com.example.elders.screens.HomeScreen
 import com.example.elders.screens.ViewMembersScreen
 import com.example.elders.screens.WelcomeScreen
@@ -54,10 +54,10 @@ fun NavigationController(){
             AddNewMembersScreen(navController = navController)
         }
         composable(ROUTE_VIEW_MEMBERS){
-            ViewMembersScreen(navController = navController)
+            ViewMembersScreen()
         }
         composable(ROUTE_CREATE_MEETING_ENTRY) {
-            CreateMeetingEntryScreen()
+            LogMeetingDataScreen()
         }
     }
 }
