@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.elders"
+    namespace = "com.zion.elders"
     compileSdk {
         version = release(37) {
             minorApiLevel = 1

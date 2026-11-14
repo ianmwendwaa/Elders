@@ -14,7 +14,7 @@ kotlin {
     }
 }
 android {
-    namespace = "com.example.backend"
+    namespace = "com.zion.backend"
     compileSdk = 36
 }
 
