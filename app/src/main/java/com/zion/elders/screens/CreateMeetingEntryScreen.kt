@@ -16,6 +16,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -54,12 +55,15 @@ fun LogMeetingDataScreen(){
         }
     }
     Column(modifier = Modifier.fillMaxSize()
-        .background(Color.White).verticalScroll(rememberScrollState()),
+        .background(Color(0xFFFAF6F1)).verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(3.dp)
     ) {
         Spacer(modifier = Modifier.height(30.dp))
         Card(modifier = Modifier.padding(16.dp).fillMaxWidth()
-            .border(0.1.dp, shape = RoundedCornerShape(10.dp), color = Color.LightGray)
+            .border(0.1.dp, shape = RoundedCornerShape(10.dp), color = Color.LightGray),
+            colors = CardDefaults.cardColors(
+                containerColor = Color(0xFFF8F8F8)
+            )
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(text = "Log Meeting Data", fontWeight = FontWeight.Bold)
@@ -98,7 +102,10 @@ fun LogMeetingDataScreen(){
 
         Card(
             modifier = Modifier.padding(16.dp)
-                .border(0.1.dp, shape = RoundedCornerShape(10.dp), color = Color.Gray)
+                .border(0.1.dp, shape = RoundedCornerShape(10.dp), color = Color.Gray),
+            colors = CardDefaults.cardColors(
+                containerColor = Color(0xFFF8F8F8)
+            )
         ) {
             Column(
                 modifier = Modifier.padding(16.dp)
@@ -135,7 +142,10 @@ fun LogMeetingDataScreen(){
         }
         // Contributions panel list
         Card(modifier = Modifier.padding(16.dp)
-            .border(0.1.dp, shape = RoundedCornerShape(10.dp), color = Color.Gray)
+            .border(0.1.dp, shape = RoundedCornerShape(10.dp), color = Color.Gray),
+            colors = CardDefaults.cardColors(
+                containerColor = Color(0xFFF8F8F8)
+            )
         ) {
             Column(
                 verticalArrangement = Arrangement.spacedBy(8.dp),

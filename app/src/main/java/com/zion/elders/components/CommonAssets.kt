@@ -5,14 +5,25 @@ package com.zion.elders.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.zion.elders.models.AppTab
 
 @Composable
 fun SystemForm(
@@ -32,5 +43,51 @@ fun SystemForm(
             verticalArrangement = Arrangement.spacedBy(7.dp),
             content = content
         )
+    }
+}
+
+@Composable
+fun BottomNavBar(
+    currentTab: AppTab,
+    onTabSelected: (AppTab) -> Unit
+){
+    val deepEmerald = Color(0xFF00674F)
+    val warmSand = Color(0xFFEFE6DC)
+    val espressoText = Color(0xFF3B2618)
+    val mutedBrown = Color(0xFF6E472B)
+
+    NavigationBar(
+        containerColor = warmSand,
+        tonalElevation = 4.dp,
+        modifier = Modifier.height(75.dp)
+    ) {
+        AppTab.entries.forEach { navItem ->
+            val isSelected = (currentTab == navItem)
+
+            NavigationBarItem(
+                selected = isSelected,
+                onClick = { onTabSelected(navItem)},
+                icon = {
+                    Icon(
+                        painter = painterResource(if (isSelected) navItem.filledIcon else navItem.outlinedIcon),
+                        contentDescription = "nav_item_img")
+                },
+                label = {
+                    Text(
+                        text = navItem.label,
+                        fontSize = 14.sp,
+                        color = Color.Black,
+                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                    )
+                },
+                colors = NavigationBarItemDefaults.colors(
+                    selectedIconColor = Color.White,
+                    indicatorColor = deepEmerald,          // Active emerald pill behind icon
+                    selectedTextColor = deepEmerald,
+                    unselectedIconColor = mutedBrown,
+                    unselectedTextColor = espressoText.copy(alpha = 0.75f)
+                )
+            )
+        }
     }
 }

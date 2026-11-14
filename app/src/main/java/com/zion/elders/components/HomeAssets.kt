@@ -4,6 +4,7 @@ package com.zion.elders.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -42,10 +43,10 @@ fun OverviewDataCard(
     dataSecondaryLabel: String = ""
 ){
     Card(
-        modifier = Modifier.width(150.dp),
+        modifier = Modifier.width(150.dp).border(1.dp, Color.LightGray, shape = RoundedCornerShape(11.dp)),
         shape = RoundedCornerShape(11.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color(0xFFF4F4F4)
+            containerColor = Color(0xFFF8F8F8)
         )
     ) {
         Column(modifier = Modifier.padding(16.dp),

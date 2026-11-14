@@ -3,7 +3,6 @@ package com.zion.elders.screens
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -43,7 +42,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
+import androidx.navigation.NavController
 import com.zion.elders.R
 import com.zion.elders.backend.Lib
 import com.zion.elders.components.MeetingDataCard
@@ -58,7 +57,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Composable
-fun HomeScreen(navController: NavHostController){
+fun HomeScreen(navController: NavController){
     val totalMembers by remember { mutableIntStateOf(0) }
     val totalContribution by remember { mutableIntStateOf(0) }
 
@@ -83,9 +82,9 @@ fun HomeScreen(navController: NavHostController){
 
     Column(
 //        0xFFEFE6DC
-        modifier = Modifier.fillMaxSize().background(Color.White).verticalScroll(rememberScrollState()),
+        modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
     ) {
-        Text(text = "Hello Ian!", fontSize = 19.sp, fontWeight = FontWeight.Bold,modifier = Modifier.padding(start = 16.dp, top = 50.dp, end = 16.dp),
+        Text(text = "Hello Ian!", fontSize = 19.sp, fontWeight = FontWeight.Bold,modifier = Modifier.padding(start = 16.dp, top = 20.dp, end = 16.dp),
             color = Color.Black
         )
 
@@ -104,7 +103,7 @@ fun HomeScreen(navController: NavHostController){
                 "Contributions",
                 R.drawable.ic_right_button,
                 "Ksh.$totalContribution",
-                "Verified Active"
+                "Net contributions"
             )
 
         }
