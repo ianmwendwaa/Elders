@@ -10,7 +10,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import com.zion.elders.screens.HomeScreen
-import com.zion.elders.screens.LogMeetingDataScreen
 import com.zion.elders.ui.theme.EldersTheme
 
 class MainActivity : ComponentActivity() {
@@ -19,7 +18,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             EldersTheme {
-                HomeScreen(navController = NavHostController(this))
+                HomeScreen(navController = NavHostController(this),)
             }
         }
     }

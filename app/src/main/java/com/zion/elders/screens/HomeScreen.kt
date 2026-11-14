@@ -1,12 +1,12 @@
 package com.zion.elders.screens
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,8 +20,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -33,29 +31,29 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.zion.elders.R
-import com.zion.elders.components.backgroundColor
-import com.zion.elders.components.cardColor
-import com.zion.elders.components.textColor
+import com.zion.elders.backend.Lib
+import com.zion.elders.components.MeetingDataCard
+import com.zion.elders.components.OverviewDataCard
+import com.zion.elders.components.SystemForm
 import com.zion.elders.models.MeetingContributionsBreakdown
 import com.zion.elders.models.MeetingData
 import com.zion.elders.ui.theme.cardTitle
+import com.zion.elders.ui.theme.disabledButtonColor
 import com.zion.elders.ui.theme.experimentalBackground
-import com.zion.elders.ui.theme.moneyBoxColor
-import com.zion.elders.ui.theme.moneyTextColor
-import com.zion.elders.ui.theme.screenBackground
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -66,6 +64,8 @@ fun HomeScreen(navController: NavHostController){
 
     var qRegMemberName by remember { mutableStateOf("") }
     var qRegPhoneNumber by remember { mutableStateOf("") }
+
+    val context = LocalContext.current
 
     val dummyMeetingData = MeetingData(
         "First meeting",
@@ -78,9 +78,12 @@ fun HomeScreen(navController: NavHostController){
         ),
         "Some emerging issues as discussed"
     )
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+
     Column(
 //        0xFFEFE6DC
-        modifier = Modifier.fillMaxSize().background(screenBackground).verticalScroll(rememberScrollState()),
+        modifier = Modifier.fillMaxSize().background(Color.White).verticalScroll(rememberScrollState()),
     ) {
         Text(text = "Hello Ian!", fontSize = 19.sp, fontWeight = FontWeight.Bold,modifier = Modifier.padding(start = 16.dp, top = 50.dp, end = 16.dp),
             color = Color.Black
@@ -114,7 +117,7 @@ fun HomeScreen(navController: NavHostController){
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Image(painter = painterResource(R.drawable.ic_right_button), "quick_reg_mem")
-                Text(text = "Quick Register Member", fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = cardTitle)
+                Text(text = "Quick Member Registration", fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = cardTitle)
             }
 
             Spacer(modifier = Modifier.height(1.dp).border(0.1.dp, color = Color.Gray))
@@ -153,6 +156,12 @@ fun HomeScreen(navController: NavHostController){
                 value = qRegPhoneNumber,
                 onValueChange = {
                     qRegPhoneNumber = it
+
+                    // Hide soft keyboard input
+                    if (qRegPhoneNumber.length == 10) {
+                        keyboardController?.hide()
+                        focusManager.clearFocus()
+                    }
                 },
                 modifier = Modifier.width(150.dp).height(48.dp),
                 placeholder = {
@@ -178,11 +187,19 @@ fun HomeScreen(navController: NavHostController){
                 shape = RoundedCornerShape(7.dp)
             )
 
-            Button(onClick = {},
+            Button(onClick = {
+                if (qRegMemberName.isNotEmpty() && qRegPhoneNumber.isNotEmpty()){
+                    registerMember(context, qRegMemberName, qRegPhoneNumber)
+                } else {
+                    Toast.makeText(context, "Please provide all member inputs!", Toast.LENGTH_SHORT).show()
+                }
+            },
                 modifier = Modifier.width(100.dp).height(45.dp).align(Alignment.End),
                 shape = RoundedCornerShape(10.dp),
+                enabled = qRegMemberName.isNotEmpty() && qRegPhoneNumber.isNotEmpty(),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = experimentalBackground
+                    containerColor = experimentalBackground,
+                    disabledContainerColor = disabledButtonColor
                 )
             ) {
                 Text(text = "Register", color = Color.White, fontSize = 14.sp)
@@ -200,114 +217,10 @@ fun HomeScreen(navController: NavHostController){
     }
 }
 
-@Composable
-fun OverviewDataCard(
-    dataLabel: String,
-    dataPainterResource: Int,
-    dataValue: String,
-    dataSecondaryLabel: String = ""
-){
-    Card(
-        modifier = Modifier.width(150.dp),
-        shape = RoundedCornerShape(11.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = Color(0xFFF4F4F4)
-        )
-    ) {
-        Column(modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(3.dp)
-        ) {
-            Row(Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(text = dataLabel, fontSize = 13.sp, color = Color.Gray)
-                Image(
-                    painter = painterResource(dataPainterResource),
-                    contentDescription = "roster_img"
-                )
-            }
-            Text(text = dataValue, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
-
-            // This may or may not be included, it's up to me to decide
-            Text(text = dataSecondaryLabel, fontSize = 12.sp, color = Color.Gray)
-
-        }
+private fun registerMember(context: Context, qMemberName: String, qMemberPhoneNumber: String){
+    if (qMemberPhoneNumber.length < 10){
+        Toast.makeText(context, "The phone number provided is too short!", Toast.LENGTH_SHORT).show()
     }
-}
-
-@Composable
-fun SystemForm(
-    modifier: Modifier = Modifier,
-    content: @Composable ColumnScope.() -> Unit
-){
-    Card(
-        modifier = modifier,
-        shape = RoundedCornerShape(10.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = Color(0xFFEFECE7)
-        )
-    ) {
-        Column(
-            modifier = Modifier
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(7.dp),
-            content = content
-        )
-    }
-}
-
-@Composable
-fun MeetingDataCard(
-    meetingData: MeetingData
-){
-    SystemForm(
-        modifier = Modifier.padding(start = 16.dp, end = 16.dp)
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(text = meetingData.title, color = cardTitle, fontWeight = FontWeight.SemiBold, maxLines = 2, overflow = TextOverflow.Ellipsis)
-            Box(modifier = Modifier.width(70.dp).height(35.dp).clip(RoundedCornerShape(8.dp)).background(moneyBoxColor),
-                contentAlignment = Alignment.Center
-            ){
-                Text(text = "Ksh.${meetingData.totalContribution}",
-                    fontSize = 14.sp, color = moneyTextColor, fontWeight = FontWeight.Bold,
-                    maxLines = 1
-                )
-            }
-        }
-
-        Text(text = meetingData.date, fontWeight = FontWeight.SemiBold, color = Color.Gray, fontSize = 14.sp)
-
-        Card(
-            shape = RoundedCornerShape(10.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = Color(0xFFEFE3D7)
-        )) {
-            Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(3.dp)) {
-                Text(text = "Breakdown", fontWeight = FontWeight.SemiBold, fontSize = 14.sp, color = Color.Gray)
-
-                meetingData.breakdown.forEach { (contributorsName, contribution) ->
-                    ContributionsListItem(contributorsName, contribution)
-                }
-            }
-        }
-
-        Card(
-            shape = RoundedCornerShape(15.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = Color(0xFFEFE9E3)
-            )
-        ) {
-            Column(
-                modifier = Modifier.padding(15.dp).fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(3.dp)
-            ) {
-                Text(text = "EMERGING ISSUES", color = cardTitle, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
-                Text(text = meetingData.emergingIssues, fontSize = 13.sp)
-            }
-        }
-    }
+    val generatedMemberNumber = Lib.generateMemberNumber(qMemberName, qMemberPhoneNumber)
+    Toast.makeText(context, "Generated member number: $generatedMemberNumber", Toast.LENGTH_LONG).show()
 }

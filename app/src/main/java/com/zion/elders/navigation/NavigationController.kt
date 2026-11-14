@@ -44,7 +44,7 @@ fun NavigationController(){
             WelcomeScreen(navController = navController)
         }
         composable(ROUTE_HOME_SCREEN){
-            HomeScreen(navController = navController)
+            HomeScreen(navController = navController,)
         }
         composable(ROUTE_ADD_NEW_MEMBER){
             AddNewMembersScreen(navController = navController)

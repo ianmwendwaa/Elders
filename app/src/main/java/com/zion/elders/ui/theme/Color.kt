@@ -16,3 +16,4 @@ val moneyBoxColor = Color(0XFFDCEDC8)
 
 val screenBackground = Color(0xFFEFE6DC)
 val experimentalBackground = Color(0xFFD2B988)
+val disabledButtonColor = Color(0xFF9E927E)
