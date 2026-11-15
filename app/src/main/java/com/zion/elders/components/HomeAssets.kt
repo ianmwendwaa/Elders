@@ -8,7 +8,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -29,7 +28,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.zion.elders.models.MeetingData
-import com.zion.elders.screens.ContributionsListItem
+import com.zion.elders.screens.meetings.ContributionsListItem
 import com.zion.elders.ui.theme.cardTitle
 import com.zion.elders.ui.theme.moneyBoxColor
 import com.zion.elders.ui.theme.moneyTextColor
@@ -46,7 +45,7 @@ fun OverviewDataCard(
         modifier = Modifier.width(150.dp).border(1.dp, Color.LightGray, shape = RoundedCornerShape(11.dp)),
         shape = RoundedCornerShape(11.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color(0xFFF8F8F8)
+            containerColor = cardColor
         )
     ) {
         Column(modifier = Modifier.padding(16.dp),

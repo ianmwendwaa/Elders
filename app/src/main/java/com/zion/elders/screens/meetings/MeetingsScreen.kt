@@ -1,4 +1,4 @@
-package com.zion.elders.screens
+package com.zion.elders.screens.meetings
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

@@ -10,20 +10,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.zion.elders.components.BottomNavBar
+import com.zion.elders.components.backgroundColor
 import com.zion.elders.models.AppTab
-import com.zion.elders.navigation.NavigationController
+import com.zion.elders.screens.meetings.MeetingsScreen
 
 @Composable
 fun MainScreen(navController: NavHostController){
     var activeTab by remember { mutableStateOf(AppTab.HOME) }
-    val creamCanvas = Color(0xFFFAF6F1)
 
     Scaffold(
-        containerColor = creamCanvas,
+        containerColor = backgroundColor,
         bottomBar = {
             BottomNavBar(currentTab = activeTab) { selectedTab ->
                 activeTab = selectedTab

@@ -34,7 +34,7 @@ fun SystemForm(
         modifier = modifier,
         shape = RoundedCornerShape(10.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color(0xFFEFECE7)
+            containerColor = systemFormColor
         )
     ) {
         Column(

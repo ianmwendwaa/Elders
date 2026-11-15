@@ -145,8 +145,8 @@ fun HomeScreen(navController: NavController){
                     focusedContainerColor = Color.White,
                     unfocusedContainerColor = Color.White,
                     disabledContainerColor = Color.White,
-                    focusedIndicatorColor = Color.Transparent, // Hides border on focus
-                    unfocusedIndicatorColor = Color.Transparent, // Hides border when idle
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent
                 ),
                 shape = RoundedCornerShape(7.dp)
             )

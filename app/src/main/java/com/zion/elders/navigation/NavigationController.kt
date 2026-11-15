@@ -7,9 +7,8 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.zion.elders.screens.AddNewMembersScreen
 import com.zion.elders.screens.HomeScreen
-import com.zion.elders.screens.LogMeetingDataScreen
+import com.zion.elders.screens.meetings.LogMeetingDataScreen
 import com.zion.elders.screens.MainScreen
 import com.zion.elders.screens.WelcomeScreen
 
@@ -48,7 +47,7 @@ fun NavigationController(navController: NavHostController){
             HomeScreen(navController = navController)
         }
         composable(ROUTE_ADD_NEW_MEMBER){
-            AddNewMembersScreen(navController = navController)
+//            AddNewMembersScreen(navController = navController)
         }
         composable(ROUTE_VIEW_MEMBERS){
 //            ViewMembersScreen()
