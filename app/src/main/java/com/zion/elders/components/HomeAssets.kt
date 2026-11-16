@@ -12,10 +12,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -30,6 +32,7 @@ import androidx.compose.ui.unit.sp
 import com.zion.elders.models.MeetingData
 import com.zion.elders.screens.meetings.ContributionsListItem
 import com.zion.elders.ui.theme.cardTitle
+import com.zion.elders.ui.theme.experimentalBackground
 import com.zion.elders.ui.theme.moneyBoxColor
 import com.zion.elders.ui.theme.moneyTextColor
 
@@ -52,13 +55,22 @@ fun OverviewDataCard(
             verticalArrangement = Arrangement.spacedBy(3.dp)
         ) {
             Row(Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(text = dataLabel, fontSize = 13.sp, color = Color.Gray)
-                Image(
-                    painter = painterResource(dataPainterResource),
-                    contentDescription = "roster_img"
-                )
+
+                Box(modifier = Modifier.size(25.dp).clip(RoundedCornerShape(200.dp))
+                    .background(nonMonetaryBoxColor),
+                    contentAlignment = Alignment.Center
+                ){
+                    Icon(
+                        painter = painterResource(dataPainterResource),
+                        contentDescription = "overview_data_img",
+                        modifier = Modifier.size(12.5.dp),
+                        tint = Color(0xFF3A3A3A)
+                    )
+                }
             }
             Text(text = dataValue, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
 

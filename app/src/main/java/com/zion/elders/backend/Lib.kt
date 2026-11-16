@@ -1,6 +1,8 @@
 package com.zion.elders.backend
 
 import android.R.attr.phoneNumber
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.Locale.getDefault
 import kotlin.random.Random
 
@@ -34,5 +36,8 @@ object Lib {
         // Obtain the trailing last 4 phone number digits.
         val trailingPhoneNumberDigits = memberPhoneNumber.takeLast(4)
         return "ELDR-$firstNameSubstr$secondNameSubstr-$trailingPhoneNumberDigits"
+    }
+    fun getCurrentDate(): String{
+        return LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
     }
 }

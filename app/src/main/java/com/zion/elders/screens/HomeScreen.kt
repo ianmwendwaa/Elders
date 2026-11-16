@@ -81,10 +81,9 @@ fun HomeScreen(navController: NavController){
     val focusManager = LocalFocusManager.current
 
     Column(
-//        0xFFEFE6DC
         modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
     ) {
-        Text(text = "Hello Ian!", fontSize = 19.sp, fontWeight = FontWeight.Bold,modifier = Modifier.padding(start = 16.dp, top = 20.dp, end = 16.dp),
+        Text(text = "Hello Mwanazayuni!", fontSize = 19.sp, fontWeight = FontWeight.Bold,modifier = Modifier.padding(start = 16.dp, top = 20.dp, end = 16.dp),
             color = Color.Black
         )
 
@@ -94,14 +93,14 @@ fun HomeScreen(navController: NavController){
             verticalAlignment = Alignment.CenterVertically) {
             OverviewDataCard(
                 "Total Roster",
-                R.drawable.ic_right_button,
+                R.drawable.group_filled,
                 totalMembers.toString(),
                 "Verified Active"
             )
 
             OverviewDataCard(
                 "Contributions",
-                R.drawable.ic_right_button,
+                R.drawable.money_bag,
                 "Ksh.$totalContribution",
                 "Net contributions"
             )

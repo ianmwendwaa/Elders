@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.navigation.compose.rememberNavController
 import com.zion.elders.navigation.NavigationController
+import com.zion.elders.screens.meetings.MinutesScreen
 import com.zion.elders.ui.theme.EldersTheme
 
 class MainActivity : ComponentActivity() {
@@ -15,7 +16,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             EldersTheme {
                 val navHostController = rememberNavController()
-                NavigationController(navHostController)
+//                NavigationController(navHostController)
+                MinutesScreen(navController = navHostController)
             }
         }
     }

@@ -1,6 +1,9 @@
 package com.zion.elders.screens.meetings
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,6 +12,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -28,22 +33,29 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.zion.elders.R
 import com.zion.elders.components.SystemForm
+import com.zion.elders.components.backgroundColor
 import com.zion.elders.components.cardColor
+import com.zion.elders.navigation.ROUTE_MINUTES_SCREEN
 import com.zion.elders.ui.theme.cardTitle
 import com.zion.elders.ui.theme.experimentalBackground
 import com.zion.elders.ui.theme.moneyBoxColor
 import com.zion.elders.ui.theme.moneyTextColor
+import com.zion.elders.ui.theme.screenBackground
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -52,7 +64,7 @@ private data class ContributionData(
     val contributionAmt: Int
 )
 @Composable
-fun LogMeetingDataScreen(){
+fun LogMeetingDataScreen(navController: NavHostController){
     val dateToday = LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
     var meetingTitle by remember { mutableStateOf("") }
     var sliderValue by remember { mutableFloatStateOf(0.5f) }
@@ -63,7 +75,8 @@ fun LogMeetingDataScreen(){
         }
     }
    Column(
-       modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
+       modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())
+           .background(backgroundColor),
        verticalArrangement = Arrangement.spacedBy(3.dp)
    ) {
        // Meeting preliminary data (date, title)
@@ -87,7 +100,7 @@ fun LogMeetingDataScreen(){
                colors = TextFieldDefaults.colors(
                    focusedContainerColor = Color.White,
                    unfocusedContainerColor = Color.White,
-                   disabledContainerColor = Color.White,
+                   disabledContainerColor = Color.LightGray,
                    focusedIndicatorColor = Color.Transparent,
                    unfocusedIndicatorColor = Color.Transparent
                ),
@@ -95,6 +108,7 @@ fun LogMeetingDataScreen(){
            )
 
            Text(text = "Meeting Title", fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = Color.Gray)
+
            TextField(
                value = meetingTitle,
                onValueChange = {
@@ -115,7 +129,12 @@ fun LogMeetingDataScreen(){
                    fontSize = 14.sp,
                    color = Color.Black
                ),
-               modifier = Modifier.height(50.dp)
+               modifier = Modifier.height(50.dp),
+               singleLine = true,
+               keyboardOptions = KeyboardOptions(
+                   capitalization = KeyboardCapitalization.Words,
+                   imeAction = ImeAction.Done
+               )
            )
        }
 
@@ -193,8 +212,8 @@ fun LogMeetingDataScreen(){
                horizontalArrangement = Arrangement.SpaceBetween,
                verticalAlignment = Alignment.CenterVertically
            ) {
-               Text(text = "Appended Contributions", color = cardTitle, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
-               Text(text = "Total: Ksh$totalContribution", color = moneyTextColor, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
+               Text(text = "Contributions", color = cardTitle, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
+               Text(text = "Total: Ksh.$totalContribution", color = moneyTextColor, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
            }
 
            // Member data
@@ -206,16 +225,49 @@ fun LogMeetingDataScreen(){
                }
            }
        }
+
+       SystemForm(
+           modifier = Modifier.padding(start = 16.dp, end = 16.dp)
+       ) {
+           Text(text = "Meeting Minutes", fontWeight = FontWeight.SemiBold, color = cardTitle, fontSize = 14.sp)
+
+           Box(
+               modifier = Modifier.fillMaxWidth().height(100.dp).background(Color.Transparent)
+           ){
+               TextField(
+                   value = "",
+                   onValueChange = { },
+                   readOnly = true,
+                   enabled = false,
+                   placeholder = {
+                       Text(text = "Click to record meeting minutes", fontSize = 13.sp)
+                   },
+                   modifier = Modifier.fillMaxSize()
+                       .clickable(true, onClick = { navController.navigate(ROUTE_MINUTES_SCREEN) }),
+                   colors = TextFieldDefaults.colors(
+                       disabledContainerColor = cardColor,
+                       disabledPlaceholderColor = Color.Gray
+                   ),
+                   shape = RoundedCornerShape(7.dp)
+               )
+               Box(
+                   modifier = Modifier.matchParentSize()
+                       .clip(RoundedCornerShape(7.dp))
+                       .clickable(enabled = true){
+                           navController.navigate(ROUTE_MINUTES_SCREEN)
+                       }
+               )
+           }
+       }
        Button(
            onClick = {},
            shape = RoundedCornerShape(8.dp),
            colors = ButtonDefaults.buttonColors(
                containerColor = experimentalBackground
            ),
-           modifier = Modifier.padding(start = 16.dp, end = 16.dp).fillMaxWidth().height(40.dp)
+           modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 20.dp).fillMaxWidth().height(40.dp)
        ) {
-           Text(text = "Save meeting data", fontSize = 14.sp, color = Color.White)
-       }
+           Text(text = "Save meeting data", fontSize = 14.sp, color = Color.White)}
    }
 }
 
@@ -223,6 +275,7 @@ private fun appendContribution(lst: MutableList<ContributionData>, name: String,
     if (name.isEmpty() && amt.toString().isEmpty()) return
     lst.add(ContributionData(name, amt))
 }
+
 @Composable
 fun ContributionsListItem(
     contributorsName: String,
@@ -236,10 +289,4 @@ fun ContributionsListItem(
         Text(contributorsName, fontWeight = FontWeight.SemiBold, color = Color.Gray)
         Text(text = "Ksh.$contributionAmt", fontWeight = FontWeight.SemiBold, color = Color(0xFF50C878))
     }
-}
-
-@Preview
-@Composable
-fun Previewer(){
-    LogMeetingDataScreen()
 }
