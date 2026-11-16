@@ -10,6 +10,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
@@ -26,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.zion.elders.R
@@ -34,6 +38,7 @@ import com.zion.elders.components.SystemForm
 import com.zion.elders.components.cardColor
 import com.zion.elders.components.systemFormColor
 import com.zion.elders.screens.meetings.TextFormattingFeature
+import com.zion.elders.ui.theme.disabledButtonColor
 import com.zion.elders.ui.theme.experimentalBackground
 
 @Composable
@@ -42,20 +47,8 @@ fun MinutesEditModeScreen(){
     var wordCount by remember { mutableIntStateOf(0) }
     val dateToday = Lib.getCurrentDate()
     SystemForm(
-        modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 30.dp)
+        modifier = Modifier.padding(start = 8.dp, end = 8.dp)
     ) {
-
-//            Button(
-//                onClick = {},
-//                shape = RoundedCornerShape(8.dp),
-//                colors = ButtonDefaults.buttonColors(
-//                    containerColor = experimentalBackground,
-//                    disabledContainerColor = disabledButtonColor
-//                )
-//            ) {
-//                Text(text = "Save minutes", fontSize = 15.sp, color = Color.White)
-//            }
-
         // Get this value from LogMeetingDataScreen
         TextField(
             value = "",
@@ -116,7 +109,7 @@ fun MinutesEditModeScreen(){
         }
     }
     // This was originally a SystemForm, but I didn't like padding in this particular section
-    Card(modifier = Modifier.padding(start = 10.dp, end = 10.dp, bottom = 20.dp),
+    Card(modifier = Modifier.padding(start = 10.dp, end = 10.dp),
         colors = CardDefaults.cardColors(
             containerColor = systemFormColor
         )) {
@@ -137,8 +130,26 @@ fun MinutesEditModeScreen(){
                     fontSize = 16.sp,
                     color = Color.Black,
                     lineHeight = 24.sp
+                ),
+                keyboardOptions = KeyboardOptions(
+                    capitalization = KeyboardCapitalization.Sentences,
                 )
             )
         }
     }
+    Button(
+        onClick = {},
+        shape = RoundedCornerShape(8.dp),
+        enabled = minutes.isNotEmpty(),
+        modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, bottom = 20.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = experimentalBackground,
+            disabledContainerColor = disabledButtonColor,
+            disabledContentColor = Color.LightGray,
+            contentColor = Color.White
+        )
+    ) {
+        Text(text = "Save minutes", fontSize = 15.sp, color = Color.White)
+    }
+
 }

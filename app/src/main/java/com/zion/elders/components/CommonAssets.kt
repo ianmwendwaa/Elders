@@ -39,7 +39,7 @@ fun BackButton(
     navController: NavHostController
 ){
     Box(
-        modifier = Modifier.size(30.dp).clip(RoundedCornerShape(100.dp))
+        modifier = Modifier.size(35.dp).clip(RoundedCornerShape(100.dp))
             .background(nonMonetaryBoxColor).clickable(true){ navController.popBackStack() },
         contentAlignment = Alignment.Center,
     ) {

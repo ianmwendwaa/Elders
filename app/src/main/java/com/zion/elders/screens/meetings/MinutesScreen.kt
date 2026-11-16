@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -54,28 +55,29 @@ fun MinutesScreen(navController: NavHostController){
     ) {
         // Minutes form header
         Row(
-            modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, top = 20.dp),
+            modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, top = 35.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             BackButton(navController)
-            Text("Minutes", fontSize = 19.sp, color = Color.Black, fontWeight = FontWeight.Bold)
+            Text("Minutes", fontSize = 21.sp, color = Color.Black, fontWeight = FontWeight.Bold)
 
             // Toggle between Edit and Preview modes
             Box(
-                modifier = Modifier.width(100.dp).height(40.dp).clip(RoundedCornerShape(25.dp))
+                modifier = Modifier.width(105.dp).height(40.dp).clip(RoundedCornerShape(25.dp))
                     .background(pillBackgroundColor).clickable(
                         true
                     ) {
                         isPreviewModeSelected = !isPreviewModeSelected
                     }
             ) {
-                Row(modifier = Modifier.matchParentSize()) {
-                    EditorMode.entries.forEach { mode ->
-                        PillButton(
-                            ""
-                        )
-                    }
+
+                Row(modifier = Modifier.matchParentSize(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(3.dp)) {
+                    PillButton("Edit")
+                    Text(text = "Preview", fontWeight = FontWeight.SemiBold, color = Color.DarkGray, fontSize = 13.sp)
+                    Spacer(modifier = Modifier.width(20.dp))
                 }
             }
         }
@@ -89,14 +91,14 @@ fun MinutesScreen(navController: NavHostController){
 
 @Composable
 fun PillButton(
-    modeLabel: String
+    modeLabel: String,
 ){
     Box(modifier = Modifier.fillMaxHeight().width(50.dp).clip(RoundedCornerShape(100.dp)).background(
         pillButtonColor
     ),
         contentAlignment = Alignment.Center
     ){
-        Text(text = modeLabel)
+        Text(text = modeLabel, fontSize = 13.sp, color = Color.White, fontWeight = FontWeight.SemiBold)
     }
 }
 

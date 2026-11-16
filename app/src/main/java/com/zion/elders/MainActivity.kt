@@ -16,8 +16,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             EldersTheme {
                 val navHostController = rememberNavController()
-//                NavigationController(navHostController)
-                MinutesScreen(navController = navHostController)
+                NavigationController(navHostController)
+//                MinutesScreen(navController = navHostController)
             }
         }
     }
