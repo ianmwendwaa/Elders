@@ -39,6 +39,10 @@ fun MainScreen(navController: NavHostController){
                 AppTab.MEETINGS -> {
                     MeetingsScreen(navController)
                 }
+
+                AppTab.PROJECTS -> {
+                    ProjectsScreen()
+                }
                 else -> {
                     ""
                 }

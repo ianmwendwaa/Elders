@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -84,6 +85,7 @@ fun LogMeetingDataScreen(navController: NavHostController){
            modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 40.dp).fillMaxWidth()
        ) {
            Text(text = "Log New Meeting Data", color = cardTitle, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
+           Spacer(modifier = Modifier.fillMaxWidth().height(1.dp).background(Color.LightGray))
            Text(text = "Meeting date", fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = Color.Gray)
 
            TextField(
@@ -143,6 +145,7 @@ fun LogMeetingDataScreen(navController: NavHostController){
            modifier = Modifier.padding(start = 16.dp, end = 16.dp)
        ) {
            Text(text = "Append Contributions", fontSize = 14.sp, color = cardTitle, fontWeight = FontWeight.SemiBold)
+           Spacer(modifier = Modifier.fillMaxWidth().height(1.dp).background(Color.LightGray))
 
            Text("Select member", fontSize = 13.sp, color = Color.Gray)
            TextField(
@@ -174,7 +177,7 @@ fun LogMeetingDataScreen(navController: NavHostController){
                Text(text = "Ksh.${sliderValue.toInt()}", fontSize = 13.sp, color = moneyTextColor, fontWeight = FontWeight.SemiBold)
            }
 
-           // @ToDo: Proposal: Should this be swapped with a text field?
+           // @ToDo: Proposal: Should this be swapped with a text field? It's low-key difficult to deal with
            Slider(
                value = sliderValue,
                onValueChange = {
@@ -215,6 +218,7 @@ fun LogMeetingDataScreen(navController: NavHostController){
                Text(text = "Contributions", color = cardTitle, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
                Text(text = "Total: Ksh.$totalContribution", color = moneyTextColor, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
            }
+           Spacer(modifier = Modifier.fillMaxWidth().height(1.dp).background(Color.LightGray))
 
            // Member data
            if (contributionsList.isEmpty()){
@@ -230,6 +234,7 @@ fun LogMeetingDataScreen(navController: NavHostController){
            modifier = Modifier.padding(start = 16.dp, end = 16.dp)
        ) {
            Text(text = "Meeting Minutes", fontWeight = FontWeight.SemiBold, color = cardTitle, fontSize = 14.sp)
+           Spacer(modifier = Modifier.fillMaxWidth().height(1.dp).background(Color.LightGray))
 
            Box(
                modifier = Modifier.fillMaxWidth().height(100.dp).background(Color.Transparent)

@@ -37,6 +37,7 @@ import com.zion.elders.backend.Lib
 import com.zion.elders.components.SystemForm
 import com.zion.elders.components.cardColor
 import com.zion.elders.components.systemFormColor
+import com.zion.elders.screens.meetings.CustomTextFieldForm
 import com.zion.elders.screens.meetings.TextFormattingFeature
 import com.zion.elders.ui.theme.disabledButtonColor
 import com.zion.elders.ui.theme.experimentalBackground
@@ -49,27 +50,12 @@ fun MinutesEditModeScreen(){
     SystemForm(
         modifier = Modifier.padding(start = 8.dp, end = 8.dp)
     ) {
-        // Get this value from LogMeetingDataScreen
-        TextField(
-            value = "",
-            onValueChange = {},
-            enabled = false,
-            modifier = Modifier.fillMaxWidth().height(48.dp),
-            placeholder = {
-                Text(text = "Meeting title", fontSize = 13.sp, color = Color.Gray)
-            },
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color.White,
-                unfocusedContainerColor = Color.White,
-                disabledContainerColor = cardColor,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent
-            ),
-            shape = RoundedCornerShape(8.dp)
-        )
+
         // Text formatting features row
         Row(
-            modifier = Modifier.fillMaxWidth().height(50.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(7.dp)
         ) {
@@ -77,9 +63,16 @@ fun MinutesEditModeScreen(){
             TextFormattingFeature(formattingIcon = R.drawable.format_italic) { }
             TextFormattingFeature(formattingIcon = R.drawable.format_underlined_squiggle) { }
 
-            Spacer(modifier = Modifier.height(25.dp).width(1.dp).background(Color.LightGray))
+            Spacer(modifier = Modifier
+                .height(25.dp)
+                .width(1.dp)
+                .background(Color.LightGray))
             TextFormattingFeature(formattingIcon = R.drawable.format_list_bullets) { }
         }
+        Spacer(modifier = Modifier
+            .fillMaxWidth()
+            .height(1.dp)
+            .background(Color.LightGray))
         // Word counter and date display
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -109,47 +102,45 @@ fun MinutesEditModeScreen(){
         }
     }
     // This was originally a SystemForm, but I didn't like padding in this particular section
-    Card(modifier = Modifier.padding(start = 10.dp, end = 10.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = systemFormColor
-        )) {
-        Column(modifier = Modifier.padding(8.dp)) {
-            TextField(
-                value = minutes,
-                onValueChange = { minutes = it },
-                modifier = Modifier.fillMaxWidth().height(500.dp),
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = Color.White,
-                    unfocusedContainerColor = Color.White,
-                    disabledContainerColor = Color.Transparent,
-                    cursorColor = experimentalBackground,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent
-                ),
-                textStyle = TextStyle(
-                    fontSize = 16.sp,
-                    color = Color.Black,
-                    lineHeight = 24.sp
-                ),
-                keyboardOptions = KeyboardOptions(
-                    capitalization = KeyboardCapitalization.Sentences,
-                )
+    CustomTextFieldForm {
+        TextField(
+            value = minutes,
+            onValueChange = { minutes = it },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(500.dp),
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = Color.White,
+                unfocusedContainerColor = Color.White,
+                disabledContainerColor = Color.Transparent,
+                cursorColor = experimentalBackground,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent
+            ),
+            textStyle = TextStyle(
+                fontSize = 16.sp,
+                color = Color.Black,
+                lineHeight = 24.sp
+            ),
+            keyboardOptions = KeyboardOptions(
+                capitalization = KeyboardCapitalization.Sentences,
             )
+        )
+        Button(
+            onClick = {},
+            shape = RoundedCornerShape(8.dp),
+            enabled = minutes.isNotEmpty(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp, end = 16.dp, bottom = 20.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = experimentalBackground,
+                disabledContainerColor = disabledButtonColor,
+                disabledContentColor = Color.LightGray,
+                contentColor = Color.White
+            )
+        ) {
+            Text(text = "Save minutes", fontSize = 15.sp, color = Color.White)
         }
     }
-    Button(
-        onClick = {},
-        shape = RoundedCornerShape(8.dp),
-        enabled = minutes.isNotEmpty(),
-        modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, bottom = 20.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = experimentalBackground,
-            disabledContainerColor = disabledButtonColor,
-            disabledContentColor = Color.LightGray,
-            contentColor = Color.White
-        )
-    ) {
-        Text(text = "Save minutes", fontSize = 15.sp, color = Color.White)
-    }
-
 }

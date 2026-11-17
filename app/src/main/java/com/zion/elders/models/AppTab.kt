@@ -10,5 +10,6 @@ enum class AppTab(
     val outlinedIcon: Int
 ) {
     HOME("Home", R.drawable.home_filled, R.drawable.home_outline),
-    MEETINGS("Meetings", R.drawable.trending_up_filled, R.drawable.trending_up_filled)
+    MEETINGS("Meetings", R.drawable.trending_up_filled, R.drawable.trending_up_filled),
+    PROJECTS("Projects", R.drawable.projects_filled, R.drawable.projects_outline)
 }

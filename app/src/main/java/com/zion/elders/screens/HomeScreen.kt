@@ -3,6 +3,7 @@ package com.zion.elders.screens
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -118,7 +119,7 @@ fun HomeScreen(navController: NavController){
                 Text(text = "Quick Member Registration", fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = cardTitle)
             }
 
-            Spacer(modifier = Modifier.height(1.dp).border(0.1.dp, color = Color.Gray))
+            Spacer(modifier = Modifier.fillMaxWidth().height(1.dp).background(Color.LightGray))
 
             TextField(
                 value = qRegMemberName,
@@ -209,7 +210,8 @@ fun HomeScreen(navController: NavController){
             start = 16.dp, end = 16.dp, bottom = 1.dp, top = 10.dp
         ), horizontalArrangement = Arrangement.SpaceBetween) {
             Text(text = "Recent meetings", color = cardTitle, fontWeight = FontWeight.SemiBold)
-            Text(text = "See all", color = experimentalBackground, fontSize = 14.sp)
+            Spacer(modifier = Modifier.fillMaxWidth().height(1.dp).background(Color.LightGray))
+            Text(text = "See all", color = experimentalBackground, fontSize = 13.5.sp)
         }
         MeetingDataCard(dummyMeetingData)
     }
