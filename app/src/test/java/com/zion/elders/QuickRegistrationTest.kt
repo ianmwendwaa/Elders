@@ -1,6 +1,7 @@
 package com.zion.elders
 
 import io.ktor.client.HttpClient
+import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
@@ -31,15 +32,6 @@ class QuickRegistrationTest {
         @SerialName("member_number") val number: String
     )
     @Test
-    fun test_server_conn(){
-        // Expect OK, with body "Hello Ian! Seeing this message means that Mirage is up and ready to get her hands dirty."
-        runBlocking {
-            val response = client.get("http://127.0.0.1:8080/")
-            assertEquals(HttpStatusCode.OK, response.status)
-            println("Response: ${response.bodyAsText()}")
-        }
-    }
-    @Test
     fun register_member(){
         val mockPayload = Payload(
             name = "Ian Mwendwa",
@@ -55,6 +47,25 @@ class QuickRegistrationTest {
             println("Mirage response: ${response.bodyAsText()}")
         }
     }
-//    @Test
-//    fun get_
+    @Test
+    fun get_members(){
+        runBlocking {
+            val response = client.get("http://127.0.0.1:8080/all_members")
+            assertEquals(HttpStatusCode.OK, response.status)
+
+            val memberList = response.body<List<Payload>>()
+            println("Response body: $memberList")
+        }
+    }
+    // To be used on the home overview card
+    @Test
+    fun member_count(){
+        runBlocking {
+            val response = client.get("http://127.0.0.1:8080/all_members")
+            assertEquals(HttpStatusCode.OK, response.status)
+
+            val members = response.body<List<Payload>>()
+            println("Total members: ${members.size}")
+        }
+    }
 }
