@@ -4,7 +4,6 @@ import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -43,6 +42,8 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.zion.elders.R
 import com.zion.elders.backend.Lib
@@ -54,16 +55,21 @@ import com.zion.elders.models.MeetingData
 import com.zion.elders.ui.theme.cardTitle
 import com.zion.elders.ui.theme.disabledButtonColor
 import com.zion.elders.ui.theme.experimentalBackground
+import com.zion.elders.viewmodels.HomeOverviewViewModel
+import com.zion.elders.viewmodels.QuickRegistrationViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Composable
-fun HomeScreen(navController: NavController){
-    val totalMembers by remember { mutableIntStateOf(0) }
-    val totalContribution by remember { mutableIntStateOf(0) }
-
-    var qRegMemberName by remember { mutableStateOf("") }
-    var qRegPhoneNumber by remember { mutableStateOf("") }
+fun HomeScreen(
+    navController: NavController,
+    registrationViewModel: QuickRegistrationViewModel = viewModel(),
+    overviewDataViewModel: HomeOverviewViewModel = viewModel()
+){
+    val overviewDataState by overviewDataViewModel.uiState.collectAsStateWithLifecycle()
+    val registrationFormState by registrationViewModel.uiState.collectAsStateWithLifecycle()
+    val totalMembers by remember { mutableIntStateOf(overviewDataViewModel.getTotalMembers()) }
+    val totalContribution by remember { mutableIntStateOf(overviewDataViewModel.getNetContributions() ) }
 
     val context = LocalContext.current
 
@@ -122,9 +128,9 @@ fun HomeScreen(navController: NavController){
             Spacer(modifier = Modifier.fillMaxWidth().height(1.dp).background(Color.LightGray))
 
             TextField(
-                value = qRegMemberName,
+                value = registrationFormState.fullName,
                 onValueChange = {
-                    qRegMemberName = it
+                    registrationViewModel.onFullNameChanged(it)
                 },
                 modifier = Modifier.fillMaxWidth().height(48.dp),
                 placeholder = {
@@ -152,15 +158,9 @@ fun HomeScreen(navController: NavController){
             )
 
             TextField(
-                value = qRegPhoneNumber,
+                value = registrationFormState.phoneNumber,
                 onValueChange = {
-                    qRegPhoneNumber = it
-
-                    // Hide soft keyboard input
-                    if (qRegPhoneNumber.length == 10) {
-                        keyboardController?.hide()
-                        focusManager.clearFocus()
-                    }
+                    registrationViewModel.onPhoneNumberChanged(it, keyboardController, focusManager)
                 },
                 modifier = Modifier.width(150.dp).height(48.dp),
                 placeholder = {
@@ -187,15 +187,11 @@ fun HomeScreen(navController: NavController){
             )
 
             Button(onClick = {
-                if (qRegMemberName.isNotEmpty() && qRegPhoneNumber.isNotEmpty()){
-                    registerMember(context, qRegMemberName, qRegPhoneNumber)
-                } else {
-                    Toast.makeText(context, "Please provide all member inputs!", Toast.LENGTH_SHORT).show()
-                }
+                registrationViewModel.onRegisterMember(context)
             },
                 modifier = Modifier.width(100.dp).height(45.dp).align(Alignment.End),
                 shape = RoundedCornerShape(10.dp),
-                enabled = qRegMemberName.isNotEmpty() && qRegPhoneNumber.isNotEmpty(),
+                enabled = registrationFormState.phoneNumber.isNotEmpty() && registrationFormState.fullName.isNotEmpty(),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = experimentalBackground,
                     disabledContainerColor = disabledButtonColor
@@ -210,17 +206,8 @@ fun HomeScreen(navController: NavController){
             start = 16.dp, end = 16.dp, bottom = 1.dp, top = 10.dp
         ), horizontalArrangement = Arrangement.SpaceBetween) {
             Text(text = "Recent meetings", color = cardTitle, fontWeight = FontWeight.SemiBold)
-            Spacer(modifier = Modifier.fillMaxWidth().height(1.dp).background(Color.LightGray))
             Text(text = "See all", color = experimentalBackground, fontSize = 13.5.sp)
         }
         MeetingDataCard(dummyMeetingData)
     }
-}
-
-private fun registerMember(context: Context, qMemberName: String, qMemberPhoneNumber: String){
-    if (qMemberPhoneNumber.length < 10){
-        Toast.makeText(context, "The phone number provided is too short!", Toast.LENGTH_SHORT).show()
-    }
-    val generatedMemberNumber = Lib.generateMemberNumber(qMemberName, qMemberPhoneNumber)
-    Toast.makeText(context, "Generated member number: $generatedMemberNumber", Toast.LENGTH_LONG).show()
 }
