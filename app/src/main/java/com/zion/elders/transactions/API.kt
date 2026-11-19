@@ -5,6 +5,7 @@ import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
+import io.ktor.client.statement.bodyAsText
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -22,6 +23,10 @@ class API {
             })
         }
     }
+    private val json = Json {
+        prettyPrint = true
+        ignoreUnknownKeys = true
+    }
     @Serializable
     data class Payload(
         @SerialName("member_name") val name: String,
@@ -29,6 +34,8 @@ class API {
         @SerialName("member_number") val number: String
     )
     suspend fun fetchMembers(): List<Payload> {
+        // Divine intellectual intervention. Praise Jehovah!
+        val resp = json.decodeFromString<Payload>(client.get(getMembersEndpoint).bodyAsText())
         return client.get(getMembersEndpoint).body<List<Payload>>()
     }
 }

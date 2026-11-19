@@ -20,3 +20,5 @@ val disabledButtonColor = Color(0xFF9E927E)
 
 val lightBrown = Color(0xFFE5D3B7)
 val previewBoxColor = Color(0xFFE0CFB9)
+//0xFFF3F3F3
+val progressBarTrackColor = Color(0xFFECE2D2)

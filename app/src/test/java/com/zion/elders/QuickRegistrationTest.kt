@@ -16,6 +16,7 @@ import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 import org.junit.Test
 
 
@@ -24,6 +25,10 @@ class QuickRegistrationTest {
         install(ContentNegotiation){
             json()
         }
+    }
+    private val json = Json {
+        ignoreUnknownKeys = true
+        prettyPrint = true
     }
     @Serializable
     private data class Payload(
