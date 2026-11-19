@@ -40,4 +40,8 @@ object Lib {
     fun getCurrentDate(): String{
         return LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
     }
+    // Returns the provided number with a thousand's comma separator.
+    fun formatNumber(number: Double): String {
+        return "%,d".format(number)
+    }
 }

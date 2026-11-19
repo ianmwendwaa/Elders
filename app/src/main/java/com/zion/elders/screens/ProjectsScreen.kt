@@ -1,5 +1,7 @@
 package com.zion.elders.screens
 
+import android.icu.number.NumberFormatter
+import android.icu.text.NumberFormat
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -60,14 +62,21 @@ import com.zion.elders.components.cardColor
 import com.zion.elders.components.systemFormColor
 import com.zion.elders.ui.theme.cardTitle
 import com.zion.elders.ui.theme.experimentalBackground
+import com.zion.elders.ui.theme.lightBrown
 import com.zion.elders.ui.theme.moneyBoxColor
 import com.zion.elders.ui.theme.progressBarTrackColor
+import com.zion.elders.ui.theme.screenBackground
+import kotlinx.coroutines.launch
+import java.util.Locale
 
 data class ProjectData(
     val projectTitle: String,
     val amountContributed: Float,
     val projectTarget: Float
-)
+){
+    val formattedContribution: String get() = NumberFormat.getInstance(Locale.US).format(amountContributed)
+    val formattedTarget: String get() = NumberFormat.getInstance(Locale.US).format(projectTarget)
+}
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProjectsScreen(){
@@ -86,9 +95,10 @@ fun ProjectsScreen(){
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
-        Row(modifier = Modifier
-            .padding(start = 16.dp, end = 16.dp, top = 40.dp, bottom = 5.dp)
-            .fillMaxWidth(),
+        Row(
+            modifier = Modifier
+                 .padding(start = 16.dp, end = 16.dp, top = 20.dp, bottom = 5.dp)
+                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -103,7 +113,7 @@ fun ProjectsScreen(){
             .height(10.dp)
             .fillMaxWidth())
 
-        Text(text = "Active Projects (count)", color = cardTitle, fontSize = 15.sp, fontWeight = FontWeight.SemiBold,
+        Text(text = "Active Projects: (${mockProjectData.size})", color = cardTitle, fontSize = 15.sp, fontWeight = FontWeight.SemiBold,
             modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 5.dp))
         mockProjectData.forEach { projectData ->
             ProjectData(
@@ -116,77 +126,101 @@ fun ProjectsScreen(){
             ModalBottomSheet(
                 onDismissRequest = { showSheet = false},
                 sheetState = sheetState,
-                containerColor = systemFormColor
+                containerColor = cardColor
             ) {
                 Column(
                     modifier = Modifier.fillMaxSize().padding(13.dp)
                 ) {
-                    Text(text = "Create New Project", fontWeight = FontWeight.Bold, fontSize = 20.sp, color = Color.Black,
+                    Text(text = "Create New Project", fontWeight = FontWeight.Bold, fontSize = 22.sp, color = Color.Black,
                         textAlign = TextAlign.Center)
-                    Text(text = "Project Title", fontWeight = FontWeight.SemiBold, color = Color.Black, fontSize = 15.sp)
-                    TextField(
-                        value = projectTitle,
-                        onValueChange = { projectTitle = it },
-                        modifier = Modifier.fillMaxWidth().height(48.dp),
-                        placeholder = {
-                            Text("Project Title", fontSize = 14.sp)
-                        },
-                        textStyle = TextStyle(
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.Normal,
-                            color = Color.Black
-                        ),
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(
-                            capitalization = KeyboardCapitalization.Words,
-                            keyboardType = KeyboardType.Text,
-                            imeAction = ImeAction.Next
-                        ),
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color.White,
-                            unfocusedContainerColor = Color.White,
-                            disabledContainerColor = Color.White,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent
-                        ),
-                        shape = RoundedCornerShape(7.dp)
-                    )
-                    Text(
-                        text = "Project Target", fontSize = 15.sp, color = Color.Black, fontWeight = FontWeight.SemiBold
-                    )
-                    TextField(
-                        value = projectTarget,
-                        onValueChange = { projectTarget = it },
-                        modifier = Modifier.width(150.dp).height(48.dp),
-                        placeholder = {
-                            Text("Project Target", fontSize = 14.sp)
-                        },
-                        textStyle = TextStyle(
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.Normal,
-                            color = Color.Black
-                        ),
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.NumberSigned,
-                            imeAction = ImeAction.Done
-                        ),
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color.White,
-                            unfocusedContainerColor = Color.White,
-                            disabledContainerColor = Color.White,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent
-                        ),
-                        shape = RoundedCornerShape(7.dp)
-                    )
 
+                    SystemForm {
+                        Text(
+                            text = "Project Title",
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color.Black,
+                            fontSize = 15.sp
+                        )
+                        TextField(
+                            value = projectTitle,
+                            onValueChange = { projectTitle = it },
+                            modifier = Modifier.fillMaxWidth().height(50.dp),
+                            placeholder = {
+                                Text("Project Title", fontSize = 14.sp)
+                            },
+                            textStyle = TextStyle(
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.Normal,
+                                color = Color.Black
+                            ),
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions(
+                                capitalization = KeyboardCapitalization.Words,
+                                keyboardType = KeyboardType.Text,
+                                imeAction = ImeAction.Next
+                            ),
+                            colors = TextFieldDefaults.colors(
+                                focusedContainerColor = Color.White,
+                                unfocusedContainerColor = Color.White,
+                                disabledContainerColor = Color.White,
+                                focusedIndicatorColor = Color.Transparent,
+                                unfocusedIndicatorColor = Color.Transparent
+                            ),
+                            shape = RoundedCornerShape(7.dp)
+                        )
+                        Text(
+                            text = "Project Target (Ksh)",
+                            fontSize = 15.sp,
+                            color = Color.Black,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                        TextField(
+                            value = projectTarget,
+                            onValueChange = { projectTarget = it },
+                            modifier = Modifier.width(150.dp).height(50.dp),
+                            placeholder = {
+                                Text("Project Target", fontSize = 14.sp)
+                            },
+                            textStyle = TextStyle(
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.Normal,
+                                color = Color.Black
+                            ),
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.NumberSigned,
+                                imeAction = ImeAction.Done
+                            ),
+                            colors = TextFieldDefaults.colors(
+                                focusedContainerColor = Color.White,
+                                unfocusedContainerColor = Color.White,
+                                disabledContainerColor = Color.White,
+                                focusedIndicatorColor = Color.Transparent,
+                                unfocusedIndicatorColor = Color.Transparent
+                            ),
+                            shape = RoundedCornerShape(7.dp)
+                        )
+                    }
+
+                    Spacer(
+                        modifier = Modifier.height(5.dp).fillMaxWidth()
+                    )
                     Button(
-                        modifier = Modifier.align(Alignment.End),
+                        modifier = Modifier.align(Alignment.End).fillMaxWidth().height(40.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = cardTitle
+                            containerColor = experimentalBackground
                         ),
-                        onClick = { Toast.makeText(context, "", Toast.LENGTH_SHORT).show() }
+                        shape = RoundedCornerShape(10.dp),
+                        onClick = {
+                            Toast.makeText(context, "Saving project: $projectTitle", Toast.LENGTH_SHORT).show()
+                            scope.launch {
+                                sheetState.hide()
+                            }.invokeOnCompletion {
+                                if (!sheetState.isVisible) {
+                                    showSheet = false
+                                }
+                            }
+                        }
                     ) {
                         Text(text = "Create", fontSize = 15.sp, color = Color.White)
                     }
@@ -219,10 +253,10 @@ fun CircularFloatingActionButton(
 
 @Composable
 fun ProjectCompletionProgress(){
-    val totalContributed = 230000.0f
-    val target = 500000.0f
+    val totalContributed = NumberFormat.getInstance(Locale.US).format(230000.0f)
+    val target = NumberFormat.getInstance(Locale.US).format(500000.0f)
 
-    val progressSoFar = totalContributed/target
+    val progressSoFar = 230000.0f/500000.0f
 
     SystemForm (
         modifier = Modifier.padding(start = 16.dp, end = 16.dp),
@@ -292,12 +326,12 @@ fun ProjectData(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Row {
-                Text(text = "Ksh.${projectData.amountContributed}", color = cardTitle, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
+                Text(text = "Ksh.${projectData.formattedContribution}", color = cardTitle, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
                 Text(text = " contributed", color = Color.Gray, fontSize = 14.sp, fontWeight = FontWeight.Normal)
             }
             Row {
                 Text(text = "Target: ", color = Color.Gray, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
-                Text(text = "${projectData.projectTarget}", color = Color.Gray, fontSize = 15.sp, fontWeight = FontWeight.Normal)
+                Text(text = "Ksh.${projectData.formattedTarget}", color = Color.Gray, fontSize = 15.sp, fontWeight = FontWeight.Normal)
             }
         }
     }

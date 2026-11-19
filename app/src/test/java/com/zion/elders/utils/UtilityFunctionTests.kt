@@ -20,4 +20,11 @@ class UtilityFunctionTests {
 
         assertEquals("ELDR-USEO-5678", memberNumber)
     }
+    @Test
+    fun format_number(){
+        val target = 1000.2
+        val formattedTarget = "%,d".format(target.toInt())
+        println(formattedTarget)
+        assertEquals("1,000", formattedTarget)
+    }
 }
