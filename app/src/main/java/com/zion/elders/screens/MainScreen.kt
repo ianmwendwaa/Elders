@@ -43,9 +43,6 @@ fun MainScreen(navController: NavHostController){
                 AppTab.PROJECTS -> {
                     ProjectsScreen()
                 }
-                else -> {
-                    ""
-                }
             }
         }
     }

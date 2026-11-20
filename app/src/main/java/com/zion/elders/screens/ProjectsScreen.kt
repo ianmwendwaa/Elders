@@ -1,6 +1,5 @@
 package com.zion.elders.screens
 
-import android.icu.number.NumberFormatter
 import android.icu.text.NumberFormat
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -20,11 +19,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
@@ -36,7 +32,6 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -57,15 +52,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.zion.elders.R
 import com.zion.elders.backend.Lib
+import com.zion.elders.components.CircularFloatingActionButton
 import com.zion.elders.components.SystemForm
 import com.zion.elders.components.cardColor
-import com.zion.elders.components.systemFormColor
 import com.zion.elders.ui.theme.cardTitle
 import com.zion.elders.ui.theme.experimentalBackground
-import com.zion.elders.ui.theme.lightBrown
 import com.zion.elders.ui.theme.moneyBoxColor
 import com.zion.elders.ui.theme.progressBarTrackColor
-import com.zion.elders.ui.theme.screenBackground
 import kotlinx.coroutines.launch
 import java.util.Locale
 
@@ -229,28 +222,6 @@ fun ProjectsScreen(){
         }
     }
 }
-
-@Composable
-fun CircularFloatingActionButton(
-    color: Color,
-    onClicked: () -> Unit
-){
-    Box(modifier = Modifier
-        .size(40.dp)
-        .clip(RoundedCornerShape(150.dp))
-        .background(color)
-        .clickable(enabled = true, onClick = onClicked),
-        contentAlignment = Alignment.Center
-    ){
-        Icon(
-            painter = painterResource(R.drawable.fab_add),
-            contentDescription = "FAB",
-            modifier = Modifier.size(20.dp),
-            tint = Color.White
-        )
-    }
-}
-
 @Composable
 fun ProjectCompletionProgress(){
     val totalContributed = NumberFormat.getInstance(Locale.US).format(230000.0f)

@@ -68,7 +68,7 @@ fun HomeScreen(
 ){
     val overviewDataState by overviewDataViewModel.uiState.collectAsStateWithLifecycle()
     val registrationFormState by registrationViewModel.uiState.collectAsStateWithLifecycle()
-    val totalMembers by remember { mutableIntStateOf(overviewDataViewModel.getTotalMembers()) }
+    val totalMembers = overviewDataState.totalMembers
     val totalContribution by remember { mutableIntStateOf(overviewDataViewModel.getNetContributions() ) }
 
     val context = LocalContext.current

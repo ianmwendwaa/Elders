@@ -28,6 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,7 +48,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.zion.elders.R
+import com.zion.elders.components.DatePickerComponent
 import com.zion.elders.components.SystemForm
 import com.zion.elders.components.backgroundColor
 import com.zion.elders.components.cardColor
@@ -67,6 +70,8 @@ private data class ContributionData(
 @Composable
 fun LogMeetingDataScreen(navController: NavHostController){
     val dateToday = LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+    var showDatePicker by remember { mutableStateOf(false) }
+    var datePicked by remember { mutableStateOf<Long?>(null) }
     var meetingTitle by remember { mutableStateOf("") }
     var sliderValue by remember { mutableFloatStateOf(0.5f) }
     val contributionsList = remember { mutableStateListOf<ContributionData>() }
@@ -88,27 +93,34 @@ fun LogMeetingDataScreen(navController: NavHostController){
            Spacer(modifier = Modifier.fillMaxWidth().height(1.dp).background(Color.LightGray))
            Text(text = "Meeting date", fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = Color.Gray)
 
-           TextField(
-               value = "",
-               onValueChange = { },
-               readOnly = true,
-               placeholder = {
-                   Text(text = dateToday, fontSize = 14.sp)
-               },
-               trailingIcon = {
-                   Icon(painterResource(R.drawable.date_edit_field_trailing_icon), contentDescription = "trailing_icon", tint = Color.Gray)
-               },
-               shape = RoundedCornerShape(7.dp),
-               colors = TextFieldDefaults.colors(
-                   focusedContainerColor = Color.White,
-                   unfocusedContainerColor = Color.White,
-                   disabledContainerColor = Color.LightGray,
-                   focusedIndicatorColor = Color.Transparent,
-                   unfocusedIndicatorColor = Color.Transparent
-               ),
-               modifier = Modifier.height(48.dp)
-           )
+           Box(modifier = Modifier.fillMaxWidth().height(50.dp)){
+               TextField(
+                   value = "",
+                   onValueChange = { },
+                   readOnly = true,
+                   enabled = false,
+                   placeholder = {
+                       Text(text = datePicked.toString(), fontSize = 14.sp)
+                   },
+                   trailingIcon = {
+                       Icon(painterResource(R.drawable.date_edit_field_trailing_icon), contentDescription = "trailing_icon", tint = Color.Gray)
+                   },
+                   shape = RoundedCornerShape(7.dp),
+                   colors = TextFieldDefaults.colors(
+                       disabledContainerColor = cardColor,
+                       disabledPlaceholderColor = Color.LightGray,
+                   ),
+                   modifier = Modifier.fillMaxSize().padding(10.dp)
+               )
+               Box(modifier = Modifier.matchParentSize().clickable(true, onClick = { showDatePicker = true }))
+           }
 
+           if (showDatePicker) {
+               DatePickerComponent(
+                   onDateSelected = { datePicked = it },
+                   onDismiss = { showDatePicker = false }
+               )
+           }
            Text(text = "Meeting Title", fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = Color.Gray)
 
            TextField(
@@ -294,4 +306,10 @@ fun ContributionsListItem(
         Text(contributorsName, fontWeight = FontWeight.SemiBold, color = Color.Gray)
         Text(text = "Ksh.$contributionAmt", fontWeight = FontWeight.SemiBold, color = Color(0xFF50C878))
     }
+}
+
+@Preview
+@Composable
+fun CreateMeetingPreview(){
+    LogMeetingDataScreen(rememberNavController())
 }

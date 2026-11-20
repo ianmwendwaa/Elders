@@ -1,5 +1,6 @@
 package com.zion.elders.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zion.elders.transactions.API
@@ -20,22 +21,27 @@ class HomeOverviewViewModel: ViewModel() {
     val uiState: StateFlow<OverviewDataState> = _uiState.asStateFlow()
 
     val api = API()
-    fun getTotalMembers(): Int {
+
+    init {
+        getTotalMembers()
+    }
+    fun getTotalMembers() {
+        Log.w("MEMBER_SIZE_COUNT", "Attempting to retrieve member count...")
         viewModelScope.launch {
             try {
                 val fetchedMemberCount = api.fetchMembers().size
+                Log.w("MEMBER_SIZE_COUNT", fetchedMemberCount.toString())
                 _uiState.update {
                     it.copy(totalMembers = fetchedMemberCount)
                 }
             } catch (e: Exception) {
                 // Fall back to default value 0
+                Log.e("SIZE_COUNT_ERR", "${e.message}")
                 _uiState.update {
                     it.copy(totalMembers = 0)
                 }
-                println("Error encountered while fetching member count. Reason: ${e.message}")
             }
         }
-        return _uiState.value.totalMembers
     }
     fun getNetContributions(): Int {
         _uiState.update {

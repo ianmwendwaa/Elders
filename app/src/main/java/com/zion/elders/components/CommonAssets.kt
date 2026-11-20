@@ -15,11 +15,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -116,4 +119,52 @@ fun BottomNavBar(
             )
         }
     }
+}
+
+@Composable
+fun CircularFloatingActionButton(
+    color: Color,
+    onClicked: () -> Unit
+){
+    Box(modifier = Modifier
+        .size(40.dp)
+        .clip(RoundedCornerShape(150.dp))
+        .background(color)
+        .clickable(enabled = true, onClick = onClicked),
+        contentAlignment = Alignment.Center
+    ){
+        Icon(
+            painter = painterResource(R.drawable.fab_add),
+            contentDescription = "FAB",
+            modifier = Modifier.size(20.dp),
+            tint = Color.White
+        )
+    }
+}
+
+@Composable
+fun DatePickerComponent(
+    onDateSelected: (Long?) -> Unit,
+    onDismiss: () -> Unit
+){
+    val datePickerState = rememberDatePickerState()
+
+    DatePickerDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    onDateSelected(datePickerState.selectedDateMillis)
+                    onDismiss()
+                }
+            ) {
+                Text(text = "Done")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = { onDismiss() }) {
+                Text("Cancel")
+            }
+        }
+    ) { }
 }
