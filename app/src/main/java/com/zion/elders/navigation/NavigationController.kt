@@ -11,7 +11,7 @@ import com.zion.elders.screens.HomeScreen
 import com.zion.elders.screens.meetings.LogMeetingDataScreen
 import com.zion.elders.screens.MainScreen
 import com.zion.elders.screens.WelcomeScreen
-import com.zion.elders.screens.meetings.MinutesScreen
+import com.zion.elders.screens.minutes.MinutesScreen
 
 @Composable
 fun NavigationController(navController: NavHostController){
@@ -45,7 +45,7 @@ fun NavigationController(navController: NavHostController){
             WelcomeScreen(navController = navController)
         }
         composable(ROUTE_HOME_SCREEN){
-            HomeScreen(navController = navController)
+            HomeScreen(navController = navController, onErrorOccurred = {})
         }
         composable(ROUTE_ADD_NEW_MEMBER){
 //            AddNewMembersScreen(navController = navController)

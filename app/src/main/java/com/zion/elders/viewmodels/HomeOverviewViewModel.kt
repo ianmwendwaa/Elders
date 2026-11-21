@@ -1,8 +1,14 @@
 package com.zion.elders.viewmodels
 
 import android.util.Log
+import androidx.compose.foundation.background
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarDefaults
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.zion.elders.components.systemFormColor
 import com.zion.elders.transactions.API
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,7 +19,9 @@ import kotlinx.coroutines.runBlocking
 
 data class OverviewDataState(
     val totalMembers: Int = 0,
-    val netContributions: Int = 0
+    val netContributions: Int = 0,
+    val errorOccurred: Boolean = false,
+    val errorMessage: String ?= null
 )
 
 class HomeOverviewViewModel: ViewModel() {
@@ -38,8 +46,14 @@ class HomeOverviewViewModel: ViewModel() {
                 // Fall back to default value 0
                 Log.e("SIZE_COUNT_ERR", "${e.message}")
                 _uiState.update {
-                    it.copy(totalMembers = 0)
+                    it.copy(
+                        errorOccurred = true,
+                        errorMessage = "${e.message}",
+                        totalMembers = 0
+                    )
                 }
+                Log.w("SIZE_COUNT_ERR", "${_uiState.value.errorOccurred}")
+                Log.w("SIZE_COUNT_ERR", "${_uiState.value.errorMessage}")
             }
         }
     }

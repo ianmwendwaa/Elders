@@ -2,7 +2,6 @@ package com.zion.elders.screens.minutes
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,15 +12,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -35,16 +31,14 @@ import androidx.compose.ui.unit.sp
 import com.zion.elders.R
 import com.zion.elders.backend.Lib
 import com.zion.elders.components.SystemForm
-import com.zion.elders.components.cardColor
-import com.zion.elders.components.systemFormColor
-import com.zion.elders.screens.meetings.CustomTextFieldForm
-import com.zion.elders.screens.meetings.TextFormattingFeature
 import com.zion.elders.ui.theme.disabledButtonColor
 import com.zion.elders.ui.theme.experimentalBackground
 
 @Composable
-fun MinutesEditModeScreen(){
-    var minutes by remember { mutableStateOf("") }
+fun MinutesEditModeScreen(
+    text: String,
+    onMinutesUpdated: (String) -> Unit
+){
     var wordCount by remember { mutableIntStateOf(0) }
     val dateToday = Lib.getCurrentDate()
     SystemForm(
@@ -73,6 +67,7 @@ fun MinutesEditModeScreen(){
             .fillMaxWidth()
             .height(1.dp)
             .background(Color.LightGray))
+
         // Word counter and date display
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -101,11 +96,11 @@ fun MinutesEditModeScreen(){
             )
         }
     }
-    // This was originally a SystemForm, but I didn't like padding in this particular section
+    // This was originally a SystemForm, but I didn't like its padding in this particular section
     CustomTextFieldForm {
         TextField(
-            value = minutes,
-            onValueChange = { minutes = it },
+            value = text,
+            onValueChange = onMinutesUpdated,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(500.dp),
@@ -129,7 +124,7 @@ fun MinutesEditModeScreen(){
         Button(
             onClick = {},
             shape = RoundedCornerShape(8.dp),
-            enabled = minutes.isNotEmpty(),
+            enabled = text.isNotEmpty(),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 16.dp, end = 16.dp, bottom = 20.dp),

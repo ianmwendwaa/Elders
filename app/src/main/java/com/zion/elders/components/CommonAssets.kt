@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -166,5 +167,7 @@ fun DatePickerComponent(
                 Text("Cancel")
             }
         }
-    ) { }
+    ) {
+        DatePicker(state = datePickerState)
+    }
 }

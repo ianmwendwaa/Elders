@@ -50,11 +50,13 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.zion.elders.R
+import com.zion.elders.backend.Lib
 import com.zion.elders.components.DatePickerComponent
 import com.zion.elders.components.SystemForm
 import com.zion.elders.components.backgroundColor
 import com.zion.elders.components.cardColor
 import com.zion.elders.navigation.ROUTE_MINUTES_SCREEN
+import com.zion.elders.screens.minutes.MinutesScreen
 import com.zion.elders.ui.theme.cardTitle
 import com.zion.elders.ui.theme.experimentalBackground
 import com.zion.elders.ui.theme.moneyBoxColor
@@ -69,7 +71,6 @@ private data class ContributionData(
 )
 @Composable
 fun LogMeetingDataScreen(navController: NavHostController){
-    val dateToday = LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
     var showDatePicker by remember { mutableStateOf(false) }
     var datePicked by remember { mutableStateOf<Long?>(null) }
     var meetingTitle by remember { mutableStateOf("") }
@@ -95,12 +96,12 @@ fun LogMeetingDataScreen(navController: NavHostController){
 
            Box(modifier = Modifier.fillMaxWidth().height(50.dp)){
                TextField(
-                   value = "",
+                   value = datePicked?.let { Lib.convertMillisToDate(it) } ?: "",
                    onValueChange = { },
                    readOnly = true,
                    enabled = false,
                    placeholder = {
-                       Text(text = datePicked.toString(), fontSize = 14.sp)
+                       Text(text = "dd/MM/yyyy", fontSize = 14.sp)
                    },
                    trailingIcon = {
                        Icon(painterResource(R.drawable.date_edit_field_trailing_icon), contentDescription = "trailing_icon", tint = Color.Gray)
@@ -110,7 +111,11 @@ fun LogMeetingDataScreen(navController: NavHostController){
                        disabledContainerColor = cardColor,
                        disabledPlaceholderColor = Color.LightGray,
                    ),
-                   modifier = Modifier.fillMaxSize().padding(10.dp)
+                   modifier = Modifier.fillMaxSize(),
+                   textStyle = TextStyle(
+                       color = Color.DarkGray,
+                       fontSize = 14.sp
+                   )
                )
                Box(modifier = Modifier.matchParentSize().clickable(true, onClick = { showDatePicker = true }))
            }
@@ -159,7 +164,7 @@ fun LogMeetingDataScreen(navController: NavHostController){
            Text(text = "Append Contributions", fontSize = 14.sp, color = cardTitle, fontWeight = FontWeight.SemiBold)
            Spacer(modifier = Modifier.fillMaxWidth().height(1.dp).background(Color.LightGray))
 
-           Text("Select member", fontSize = 13.sp, color = Color.Gray)
+           Text("Select member", fontSize = 13.sp, color = Color.Gray, fontWeight = FontWeight.SemiBold)
            TextField(
                value = "",
                onValueChange = { },
@@ -260,7 +265,9 @@ fun LogMeetingDataScreen(navController: NavHostController){
                        Text(text = "Click to record meeting minutes", fontSize = 13.sp)
                    },
                    modifier = Modifier.fillMaxSize()
-                       .clickable(true, onClick = { navController.navigate(ROUTE_MINUTES_SCREEN) }),
+                       .clickable(true, onClick = {
+                           navController.navigate(ROUTE_MINUTES_SCREEN)
+                       }),
                    colors = TextFieldDefaults.colors(
                        disabledContainerColor = cardColor,
                        disabledPlaceholderColor = Color.Gray

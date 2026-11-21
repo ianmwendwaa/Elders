@@ -3,19 +3,14 @@ package com.zion.elders.screens.minutes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -24,21 +19,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.zion.elders.backend.Lib
 import com.zion.elders.components.SystemForm
 import com.zion.elders.components.cardColor
-import com.zion.elders.components.pillBackgroundColor
-import com.zion.elders.screens.meetings.CustomTextFieldForm
-import com.zion.elders.ui.theme.disabledButtonColor
 import com.zion.elders.ui.theme.experimentalBackground
-import com.zion.elders.ui.theme.lightBrown
 import com.zion.elders.ui.theme.previewBoxColor
 
 @Composable
-fun PreviewMinutesScreen(){
+fun PreviewMinutesScreen(
+    text: String
+){
     val dateToday = Lib.getCurrentDate()
     val totalWordCount = "x"
 
@@ -88,13 +82,18 @@ fun PreviewMinutesScreen(){
 
     CustomTextFieldForm {
         TextField(
-            value = "",
+            value = text.ifBlank { "No minutes logged yet." },
             onValueChange = {},
             modifier = Modifier.fillMaxWidth().height(500.dp),
             enabled = false,
             readOnly = true,
             colors = TextFieldDefaults.colors(
                 disabledContainerColor = cardColor,
+            ),
+            textStyle = TextStyle(
+                color = Color.DarkGray,
+                fontSize = 16.sp,
+                lineHeight = 22.sp
             )
         )
     }

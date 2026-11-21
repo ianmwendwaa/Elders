@@ -19,14 +19,20 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarDefaults
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,6 +56,7 @@ import com.zion.elders.backend.Lib
 import com.zion.elders.components.MeetingDataCard
 import com.zion.elders.components.OverviewDataCard
 import com.zion.elders.components.SystemForm
+import com.zion.elders.components.systemFormColor
 import com.zion.elders.models.MeetingContributionsBreakdown
 import com.zion.elders.models.MeetingData
 import com.zion.elders.ui.theme.cardTitle
@@ -57,6 +64,7 @@ import com.zion.elders.ui.theme.disabledButtonColor
 import com.zion.elders.ui.theme.experimentalBackground
 import com.zion.elders.viewmodels.HomeOverviewViewModel
 import com.zion.elders.viewmodels.QuickRegistrationViewModel
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -64,7 +72,8 @@ import java.time.format.DateTimeFormatter
 fun HomeScreen(
     navController: NavController,
     registrationViewModel: QuickRegistrationViewModel = viewModel(),
-    overviewDataViewModel: HomeOverviewViewModel = viewModel()
+    overviewDataViewModel: HomeOverviewViewModel = viewModel(),
+    onErrorOccurred: (String) -> Unit
 ){
     val overviewDataState by overviewDataViewModel.uiState.collectAsStateWithLifecycle()
     val registrationFormState by registrationViewModel.uiState.collectAsStateWithLifecycle()
@@ -86,6 +95,10 @@ fun HomeScreen(
     )
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
+
+    if(overviewDataState.errorOccurred) {
+        overviewDataState.errorMessage?.let { onErrorOccurred(it) }
+    }
 
     Column(
         modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),

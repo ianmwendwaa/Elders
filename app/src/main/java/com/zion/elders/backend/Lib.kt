@@ -1,6 +1,8 @@
 package com.zion.elders.backend
 
 import android.R.attr.phoneNumber
+import androidx.compose.ui.text.intl.Locale
+import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale.getDefault
@@ -43,5 +45,9 @@ object Lib {
     // Returns the provided number with a thousand's comma separator.
     fun formatNumber(number: Double): String {
         return "%,d".format(number)
+    }
+    fun convertMillisToDate(millis: Long): String {
+        val formatter = SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault())
+        return formatter.format(millis)
     }
 }

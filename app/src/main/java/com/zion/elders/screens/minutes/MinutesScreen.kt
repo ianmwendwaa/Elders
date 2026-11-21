@@ -1,18 +1,22 @@
-package com.zion.elders.screens.meetings
+package com.zion.elders.screens.minutes
 
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.runtime.remember
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -27,9 +31,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,8 +38,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.zion.elders.components.BackButton
 import com.zion.elders.components.SystemForm
@@ -48,12 +52,12 @@ import com.zion.elders.components.pillBackgroundColor
 import com.zion.elders.components.pillButtonColor
 import com.zion.elders.components.systemFormColor
 import com.zion.elders.models.EditorMode
-import com.zion.elders.screens.minutes.MinutesEditModeScreen
-import com.zion.elders.screens.minutes.PreviewMinutesScreen
+import com.zion.elders.viewmodels.minuteseditor.MinutesModeManagerViewModel
 
 @Composable
-fun MinutesScreen(navController: NavHostController){
-    var currentEditorScreen by remember { mutableStateOf(EditorMode.PREVIEW) }
+fun MinutesScreen(navController: NavHostController, viewModelFactory: MinutesModeManagerViewModel = viewModel()){
+    val minutesEditor by viewModelFactory.editorMode.collectAsStateWithLifecycle()
+    val currentEditorScreen = minutesEditor.mode
     val minutesTitle = "Some title"
     Column(
         modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).background(
@@ -84,13 +88,8 @@ fun MinutesScreen(navController: NavHostController){
                            val isSelected = currentEditorScreen == mode
 
                            PillButton(
-                               modeLabel = mode.label,
-                               background = if(isSelected) pillButtonColor else Color.Transparent,
-                               textStyling = TextStyle(
-                                   color = if (isSelected) Color.White else Color.Black,
-                                   fontWeight = if(isSelected) FontWeight.Bold else FontWeight.SemiBold
-                               ),
-                               modifier = Modifier.clickable(true){ currentEditorScreen = mode }
+                               selectedMode = currentEditorScreen,
+                               onActiveModeChanged = { viewModelFactory.onSetActiveEditorMode(it) }
                            )
                        }
                    }
@@ -123,29 +122,65 @@ fun MinutesScreen(navController: NavHostController){
 
         when(currentEditorScreen){
             EditorMode.EDIT -> {
-                MinutesEditModeScreen()
+                MinutesEditModeScreen(
+                    text = minutesEditor.minutesLogged,
+                    onMinutesUpdated = { viewModelFactory.onMinutesUpdated(it) }
+                )
             }
             EditorMode.PREVIEW -> {
-                PreviewMinutesScreen()
+                PreviewMinutesScreen(
+                    text = minutesEditor.minutesLogged
+                )
             }
-            else -> EditorMode.UNKNOWN
         }
     }
 }
 
 @Composable
 fun PillButton(
-    modifier: Modifier = Modifier,
-    modeLabel: String,
-    background: Color,
-    textStyling: TextStyle
+    selectedMode: EditorMode,
+    onActiveModeChanged: (EditorMode) -> Unit,
+    pillWidth: Dp = 60.dp
 ){
-    Box(modifier = modifier.fillMaxHeight().width(60.dp).clip(RoundedCornerShape(100.dp)).background(
-        background
-    ),
-        contentAlignment = Alignment.Center
+    // Smoothly animate horizontal slide offset
+    val animatedOffset by animateDpAsState(
+        targetValue = pillWidth * selectedMode.ordinal,
+        animationSpec = tween(durationMillis = 250, easing = FastOutSlowInEasing),
+        label = "pill_slide_offset"
+    )
+    Box(modifier = Modifier.clip(RoundedCornerShape(70.dp)).background(
+        pillBackgroundColor).padding(5.dp)
     ){
-        Text(text = modeLabel, fontSize = 13.sp, color = textStyling.color, fontWeight = textStyling.fontWeight)
+        // Sliding pill
+        Box(
+            modifier = Modifier
+                .offset(x = animatedOffset)
+                .width(pillWidth)
+                .height(36.dp)
+                .padding(end = 5.dp)
+                .clip(RoundedCornerShape(70.dp))
+                .background(pillButtonColor)
+        )
+        Row {
+            EditorMode.entries.forEach { mode ->
+                val isselected = selectedMode == mode
+
+                Box(
+                    modifier = Modifier.width(pillWidth).height(36.dp)
+                        .clickable(
+                            enabled = true,
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null,
+                            onClick = { onActiveModeChanged(mode) }),
+                    contentAlignment = Alignment.Center
+                ){
+                    Text(
+                        text = mode.label, color = if (isselected) Color.White else Color.Black,
+                        fontSize = 14.sp, fontWeight = if (isselected) FontWeight.SemiBold else FontWeight.Normal
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -157,7 +192,7 @@ fun TextFormattingFeature(
     Box(
         modifier = Modifier.size(30.dp).clip(RoundedCornerShape(8.dp))
             .background(cardColor).border(1.dp, shape = RoundedCornerShape(8.dp),
-                color = Color.Gray).clickable(true){ onClick },
+                color = Color.Gray).clickable(true, onClick = onClick),
         contentAlignment = Alignment.Center
     ){
         Icon(
