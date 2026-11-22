@@ -102,7 +102,7 @@ fun MinutesScreen(navController: NavHostController, viewModelFactory: MinutesMod
                enabled = false,
                modifier = Modifier.fillMaxWidth().height(48.dp),
                placeholder = {
-                   Text(text = "Meeting title", fontSize = 13.sp, color = Color.Gray)
+                   Text(text = "Meeting title", fontSize = 14.sp, color = Color.Gray)
                },
                textStyle = TextStyle(
                    fontSize = 13.sp,

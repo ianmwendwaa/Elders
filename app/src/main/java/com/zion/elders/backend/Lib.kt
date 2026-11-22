@@ -50,4 +50,13 @@ object Lib {
         val formatter = SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault())
         return formatter.format(millis)
     }
+    fun registeredMembersMock(): List<String> {
+        // Hardcoded list in the meantime. In the future, this will be obtained from the database
+        val registeredMembers = listOf(
+            "Wycliffe", "Victor", "Jeff", "Oscar", "Alex", "Juma", "Amos",
+            "Solomon", "Geoffrey Mwangi", "Ian", "Munyoki", "Jackson", "Evans",
+            "Paul"
+        )
+        return registeredMembers
+    }
 }

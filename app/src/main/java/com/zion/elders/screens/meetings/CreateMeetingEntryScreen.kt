@@ -18,6 +18,11 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
@@ -47,6 +52,8 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.zion.elders.R
@@ -55,6 +62,7 @@ import com.zion.elders.components.DatePickerComponent
 import com.zion.elders.components.SystemForm
 import com.zion.elders.components.backgroundColor
 import com.zion.elders.components.cardColor
+import com.zion.elders.components.systemFormColor
 import com.zion.elders.navigation.ROUTE_MINUTES_SCREEN
 import com.zion.elders.screens.minutes.MinutesScreen
 import com.zion.elders.ui.theme.cardTitle
@@ -62,6 +70,7 @@ import com.zion.elders.ui.theme.experimentalBackground
 import com.zion.elders.ui.theme.moneyBoxColor
 import com.zion.elders.ui.theme.moneyTextColor
 import com.zion.elders.ui.theme.screenBackground
+import com.zion.elders.viewmodels.MeetingEntryViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -69,8 +78,20 @@ private data class ContributionData(
     val contributorsName: String,
     val contributionAmt: Int
 )
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LogMeetingDataScreen(navController: NavHostController){
+fun LogMeetingDataScreen(
+    navController: NavHostController,
+    meetingEntryViewModel: MeetingEntryViewModel = viewModel()
+){
+    val viewModelState by meetingEntryViewModel.uiState.collectAsStateWithLifecycle()
+
+    // Meeting variables
+    val dateOfEntry = viewModelState.datePicked
+    val titleOfMinutes = viewModelState.minutesTitle
+
+    var dropDownMenuExpanded by remember { mutableStateOf(false) }
+    var selectedMember by remember { mutableStateOf("Select a member") }
     var showDatePicker by remember { mutableStateOf(false) }
     var datePicked by remember { mutableStateOf<Long?>(null) }
     var meetingTitle by remember { mutableStateOf("") }
@@ -81,25 +102,41 @@ fun LogMeetingDataScreen(navController: NavHostController){
             contributionsList.sumOf { it.contributionAmt }
         }
     }
-   Column(
-       modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())
+    val members = Lib.registeredMembersMock()
+
+    Column(
+       modifier = Modifier
+           .fillMaxSize()
+           .verticalScroll(rememberScrollState())
            .background(backgroundColor),
        verticalArrangement = Arrangement.spacedBy(3.dp)
    ) {
        // Meeting preliminary data (date, title)
        SystemForm(
-           modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 40.dp).fillMaxWidth()
+           modifier = Modifier
+               .padding(start = 16.dp, end = 16.dp, top = 40.dp)
+               .fillMaxWidth()
        ) {
            Text(text = "Log New Meeting Data", color = cardTitle, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
-           Spacer(modifier = Modifier.fillMaxWidth().height(1.dp).background(Color.LightGray))
+           Spacer(modifier = Modifier
+               .fillMaxWidth()
+               .height(1.dp)
+               .background(Color.LightGray))
            Text(text = "Meeting date", fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = Color.Gray)
 
-           Box(modifier = Modifier.fillMaxWidth().height(50.dp)){
+           Box(modifier = Modifier
+               .fillMaxWidth()
+               .height(50.dp)){
                TextField(
                    value = datePicked?.let { Lib.convertMillisToDate(it) } ?: "",
                    onValueChange = { },
-                   readOnly = true,
+                   modifier = Modifier.fillMaxSize(),
                    enabled = false,
+                   readOnly = true,
+                   textStyle = TextStyle(
+                       color = Color.DarkGray,
+                       fontSize = 14.sp
+                   ),
                    placeholder = {
                        Text(text = "dd/MM/yyyy", fontSize = 14.sp)
                    },
@@ -110,14 +147,11 @@ fun LogMeetingDataScreen(navController: NavHostController){
                    colors = TextFieldDefaults.colors(
                        disabledContainerColor = cardColor,
                        disabledPlaceholderColor = Color.LightGray,
-                   ),
-                   modifier = Modifier.fillMaxSize(),
-                   textStyle = TextStyle(
-                       color = Color.DarkGray,
-                       fontSize = 14.sp
                    )
                )
-               Box(modifier = Modifier.matchParentSize().clickable(true, onClick = { showDatePicker = true }))
+               Box(modifier = Modifier
+                   .matchParentSize()
+                   .clickable(true, onClick = { showDatePicker = true }))
            }
 
            if (showDatePicker) {
@@ -129,9 +163,9 @@ fun LogMeetingDataScreen(navController: NavHostController){
            Text(text = "Meeting Title", fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = Color.Gray)
 
            TextField(
-               value = meetingTitle,
+               value = titleOfMinutes,
                onValueChange = {
-                   meetingTitle = it
+                   meetingEntryViewModel.onMinutesTitleChanged(it)
                },
                placeholder = {
                    Text(text = "Meeting title", fontSize = 14.sp)
@@ -162,36 +196,65 @@ fun LogMeetingDataScreen(navController: NavHostController){
            modifier = Modifier.padding(start = 16.dp, end = 16.dp)
        ) {
            Text(text = "Append Contributions", fontSize = 14.sp, color = cardTitle, fontWeight = FontWeight.SemiBold)
-           Spacer(modifier = Modifier.fillMaxWidth().height(1.dp).background(Color.LightGray))
+           Spacer(modifier = Modifier
+               .fillMaxWidth()
+               .height(1.dp)
+               .background(Color.LightGray))
 
            Text("Select member", fontSize = 13.sp, color = Color.Gray, fontWeight = FontWeight.SemiBold)
-           TextField(
-               value = "",
-               onValueChange = { },
-               readOnly = true,
-               placeholder = {
-                   Text(text = "Ian Mwendwa (ELDR-IANM-0433)", fontSize = 14.sp)
-               },
-               trailingIcon = {
-                    Icon(painterResource(R.drawable.arrow_drop_down), contentDescription = null, tint = Color.Gray)
-               },
-               shape = RoundedCornerShape(7.dp),
-               colors = TextFieldDefaults.colors(
-                   focusedContainerColor = Color.White,
-                   unfocusedContainerColor = Color.White,
-                   disabledContainerColor = Color.White,
-                   focusedIndicatorColor = Color.Transparent,
-                   unfocusedIndicatorColor = Color.Transparent
-               ),
-               modifier = Modifier.height(48.dp)
-           )
+
+           Box(
+               modifier = Modifier.fillMaxWidth().height(48.dp)
+           ){
+               TextField(
+                   value = selectedMember,
+                   onValueChange = { },
+                   readOnly = true,
+                   enabled = false,
+                   trailingIcon = {
+                       Icon(painterResource(R.drawable.arrow_drop_down), contentDescription = null, tint = Color.Gray)
+                   },
+                   shape = RoundedCornerShape(7.dp),
+                   colors = TextFieldDefaults.colors(
+                       disabledContainerColor = Color.White,
+                   ),
+                   modifier = Modifier.height(48.dp),
+                   textStyle = TextStyle(
+                       color = Color.DarkGray,
+                       fontSize = 14.sp,
+                       fontWeight = FontWeight.SemiBold
+                   )
+               )
+               Box(modifier = Modifier.matchParentSize()
+                   .background(Color.Transparent)
+                   .clickable(enabled = true, onClick = { dropDownMenuExpanded = !dropDownMenuExpanded}))
+
+               DropdownMenu(
+                   expanded = dropDownMenuExpanded,
+                   onDismissRequest = { dropDownMenuExpanded = false },
+                   containerColor = systemFormColor,
+                   shape = RoundedCornerShape(12.dp),
+                   modifier = Modifier.fillMaxWidth(0.7f)
+               ) {
+                   members.forEachIndexed { index, member ->
+                       DropdownMenuItem(
+                           text = { Text(member, fontSize = 15.sp, color = Color.DarkGray) },
+                           onClick = {
+                               selectedMember = members[index]
+                               dropDownMenuExpanded = false // hide the dropdown once a selection is made
+                           },
+                           contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+                       )
+                   }
+               }
+           }
            Row(
                modifier = Modifier.fillMaxWidth(),
                horizontalArrangement = Arrangement.SpaceBetween,
                verticalAlignment = Alignment.CenterVertically
            ) {
                Text("Contribution", fontSize = 13.sp, color = Color.Gray, fontWeight = FontWeight.SemiBold)
-               Text(text = "Ksh.${sliderValue.toInt()}", fontSize = 13.sp, color = moneyTextColor, fontWeight = FontWeight.SemiBold)
+               Text(text = "Ksh.${sliderValue*100}", fontSize = 13.sp, color = moneyTextColor, fontWeight = FontWeight.SemiBold)
            }
 
            // @ToDo: Proposal: Should this be swapped with a text field? It's low-key difficult to deal with
@@ -212,7 +275,7 @@ fun LogMeetingDataScreen(navController: NavHostController){
            )
            Button(
                onClick = {
-                   appendContribution(contributionsList, "Ian Mwendwa", (sliderValue).toInt())
+                   appendContribution(contributionsList, selectedMember, (sliderValue).toInt())
                },
                shape = RoundedCornerShape(8.dp),
                colors = ButtonDefaults.buttonColors(
@@ -235,7 +298,10 @@ fun LogMeetingDataScreen(navController: NavHostController){
                Text(text = "Contributions", color = cardTitle, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
                Text(text = "Total: Ksh.$totalContribution", color = moneyTextColor, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
            }
-           Spacer(modifier = Modifier.fillMaxWidth().height(1.dp).background(Color.LightGray))
+           Spacer(modifier = Modifier
+               .fillMaxWidth()
+               .height(1.dp)
+               .background(Color.LightGray))
 
            // Member data
            if (contributionsList.isEmpty()){
@@ -251,10 +317,16 @@ fun LogMeetingDataScreen(navController: NavHostController){
            modifier = Modifier.padding(start = 16.dp, end = 16.dp)
        ) {
            Text(text = "Meeting Minutes", fontWeight = FontWeight.SemiBold, color = cardTitle, fontSize = 14.sp)
-           Spacer(modifier = Modifier.fillMaxWidth().height(1.dp).background(Color.LightGray))
+           Spacer(modifier = Modifier
+               .fillMaxWidth()
+               .height(1.dp)
+               .background(Color.LightGray))
 
            Box(
-               modifier = Modifier.fillMaxWidth().height(100.dp).background(Color.Transparent)
+               modifier = Modifier
+                   .fillMaxWidth()
+                   .height(100.dp)
+                   .background(Color.Transparent)
            ){
                TextField(
                    value = "",
@@ -264,7 +336,8 @@ fun LogMeetingDataScreen(navController: NavHostController){
                    placeholder = {
                        Text(text = "Click to record meeting minutes", fontSize = 13.sp)
                    },
-                   modifier = Modifier.fillMaxSize()
+                   modifier = Modifier
+                       .fillMaxSize()
                        .clickable(true, onClick = {
                            navController.navigate(ROUTE_MINUTES_SCREEN)
                        }),
@@ -275,9 +348,10 @@ fun LogMeetingDataScreen(navController: NavHostController){
                    shape = RoundedCornerShape(7.dp)
                )
                Box(
-                   modifier = Modifier.matchParentSize()
+                   modifier = Modifier
+                       .matchParentSize()
                        .clip(RoundedCornerShape(7.dp))
-                       .clickable(enabled = true){
+                       .clickable(enabled = true) {
                            navController.navigate(ROUTE_MINUTES_SCREEN)
                        }
                )
@@ -289,7 +363,10 @@ fun LogMeetingDataScreen(navController: NavHostController){
            colors = ButtonDefaults.buttonColors(
                containerColor = experimentalBackground
            ),
-           modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 20.dp).fillMaxWidth().height(40.dp)
+           modifier = Modifier
+               .padding(start = 16.dp, end = 16.dp, bottom = 20.dp)
+               .fillMaxWidth()
+               .height(40.dp)
        ) {
            Text(text = "Save meeting data", fontSize = 14.sp, color = Color.White)}
    }
@@ -297,6 +374,7 @@ fun LogMeetingDataScreen(navController: NavHostController){
 
 private fun appendContribution(lst: MutableList<ContributionData>, name: String, amt: Int){
     if (name.isEmpty() && amt.toString().isEmpty()) return
+    if (name == "Select a member") return
     lst.add(ContributionData(name, amt))
 }
 

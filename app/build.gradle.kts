@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     id("org.jetbrains.kotlin.plugin.serialization") version "2.4.21"
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -53,6 +54,8 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.room3.runtime)
+    ksp(libs.androidx.room3.compiler)
     implementation(project(":app:core"))
     testImplementation(libs.junit)
     androidTestImplementation(platform(libs.androidx.compose.bom))

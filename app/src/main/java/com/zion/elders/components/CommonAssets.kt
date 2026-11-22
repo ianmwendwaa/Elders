@@ -58,13 +58,14 @@ fun BackButton(
 @Composable
 fun SystemForm(
     modifier: Modifier = Modifier,
+    color: Color = systemFormColor,
     content: @Composable ColumnScope.() -> Unit
 ){
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(10.dp),
         colors = CardDefaults.cardColors(
-            containerColor = systemFormColor
+            containerColor = color
         )
     ) {
         Column(

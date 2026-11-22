@@ -3,7 +3,6 @@ package com.zion.elders.screens
 import android.icu.text.NumberFormat
 import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,7 +20,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ProgressIndicatorDefaults
@@ -41,16 +38,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.zion.elders.R
 import com.zion.elders.backend.Lib
 import com.zion.elders.components.CircularFloatingActionButton
 import com.zion.elders.components.SystemForm
@@ -59,13 +53,14 @@ import com.zion.elders.ui.theme.cardTitle
 import com.zion.elders.ui.theme.experimentalBackground
 import com.zion.elders.ui.theme.moneyBoxColor
 import com.zion.elders.ui.theme.progressBarTrackColor
+import com.zion.elders.ui.theme.projectOverviewTrackColor
 import kotlinx.coroutines.launch
 import java.util.Locale
 
 data class ProjectData(
     val projectTitle: String,
     val amountContributed: Float,
-    val projectTarget: Float
+    val projectTarget: Float,
 ){
     val formattedContribution: String get() = NumberFormat.getInstance(Locale.US).format(amountContributed)
     val formattedTarget: String get() = NumberFormat.getInstance(Locale.US).format(projectTarget)
@@ -75,8 +70,8 @@ data class ProjectData(
 fun ProjectsScreen(){
     val context = LocalContext.current
     val mockProjectData = listOf(
-        ProjectData("Keyboard contribution", 1000.0f, 10000.0f),
-        ProjectData("Gas for Mtumishi", 0.0f, 1500.0f),
+        ProjectData("Keyboard contribution", 2000.0f, 25000.0f),
+        ProjectData("Gas for Mtumishi", 2350.0f, 2350.0f),
         ProjectData("Sound systems", 150.0f, 15000.0f)
     )
     // Modal bottom sheet setup
@@ -124,8 +119,12 @@ fun ProjectsScreen(){
                 Column(
                     modifier = Modifier.fillMaxSize().padding(13.dp)
                 ) {
-                    Text(text = "Create New Project", fontWeight = FontWeight.Bold, fontSize = 22.sp, color = Color.Black,
-                        textAlign = TextAlign.Center)
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Text(text = "Create New Project", fontWeight = FontWeight.Bold, fontSize = 22.sp, color = Color.Black)
+                    }
 
                     SystemForm {
                         Text(
@@ -231,23 +230,24 @@ fun ProjectCompletionProgress(){
 
     SystemForm (
         modifier = Modifier.padding(start = 16.dp, end = 16.dp),
+        color = cardTitle
     ) {
         Text(text = "Total Contributions as of ${Lib.getCurrentDate()}",
             fontSize = 17.sp, fontWeight = FontWeight.SemiBold,
-            color = Color.Black)
+            color = Color.White)
 
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(3.dp)
         ) {
-            Text(text = "Ksh.$totalContributed", color = Color.Black, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
-            Text(text = "of Ksh.$target", color = Color.Gray, fontSize = 14.sp, fontWeight = FontWeight.Normal)
+            Text(text = "Ksh.$totalContributed", color = Color.White, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
+            Text(text = "of Ksh.$target", color = Color.LightGray, fontSize = 14.sp, fontWeight = FontWeight.Normal)
         }
         LinearProgressIndicator(
             progress = { progressSoFar },
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(20.dp)),
-            color = cardTitle,
+            color = projectOverviewTrackColor,
             trackColor = progressBarTrackColor,
             strokeCap = ProgressIndicatorDefaults.LinearStrokeCap
         )
@@ -255,8 +255,8 @@ fun ProjectCompletionProgress(){
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = "Overall completion", fontSize = 15.sp, color = Color.Gray)
-            Text(text = "${progressSoFar*100}%", fontSize = 14.sp, color = Color.Gray)
+            Text(text = "Overall completion", fontSize = 15.sp, color = Color.LightGray)
+            Text(text = "${progressSoFar*100}%", fontSize = 14.sp, color = Color.LightGray)
         }
     }
 }
@@ -266,6 +266,8 @@ fun ProjectData(
     projectData: ProjectData
 ){
     val projectProgress = projectData.amountContributed / projectData.projectTarget
+    val completionProgress = (projectProgress * 100 == 100.0f)
+    
     SystemForm(
         modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 7.dp)
     ) {
@@ -276,11 +278,13 @@ fun ProjectData(
             Text(text = projectData.projectTitle, fontSize = 15.sp, color = cardTitle, fontWeight = FontWeight.SemiBold)
             Box(
                 modifier = Modifier.width(65.dp).height(30.dp).clip(RoundedCornerShape(10.dp)).background(
-                    moneyBoxColor
+                    if (completionProgress) moneyBoxColor else Color.Red
                 ),
                 contentAlignment = Alignment.Center
             ){
-                Text(text = "${projectProgress*100}%", fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
+                Text(text = "${projectProgress*100}%", fontSize = 14.sp, fontWeight = FontWeight.SemiBold,
+                    color = if (completionProgress) cardTitle else Color.White
+                )
             }
         }
         LinearProgressIndicator(

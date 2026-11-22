@@ -17,12 +17,15 @@ navigationCompose = "2.10.2"
 jetbrainsKotlinJvm = "2.4.21"
 ksp = "2.1.21"
 room = "2.8.5"
+room3Runtime = "3.0.3"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+androidx-room3-compiler = { module = "androidx.room3:room3-compiler", version.ref = "room3Runtime" }
+androidx-room3-runtime = { module = "androidx.room3:room3-runtime", version.ref = "room3Runtime" }
 dotenv-java = { module = "io.github.cdimascio:dotenv-java", version.ref = "dotenvJava" }
 exposed-core = { module = "org.jetbrains.exposed:exposed-core", version.ref = "exposedCore" }
 exposed-jdbc = { module = "org.jetbrains.exposed:exposed-jdbc", version.ref = "exposedCore" }
