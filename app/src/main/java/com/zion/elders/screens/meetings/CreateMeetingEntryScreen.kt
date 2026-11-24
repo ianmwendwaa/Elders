@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -21,7 +20,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Slider
@@ -32,19 +30,14 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -64,20 +57,12 @@ import com.zion.elders.components.backgroundColor
 import com.zion.elders.components.cardColor
 import com.zion.elders.components.systemFormColor
 import com.zion.elders.navigation.ROUTE_MINUTES_SCREEN
-import com.zion.elders.screens.minutes.MinutesScreen
 import com.zion.elders.ui.theme.cardTitle
 import com.zion.elders.ui.theme.experimentalBackground
-import com.zion.elders.ui.theme.moneyBoxColor
 import com.zion.elders.ui.theme.moneyTextColor
-import com.zion.elders.ui.theme.screenBackground
+import com.zion.elders.viewmodels.ContributionData
 import com.zion.elders.viewmodels.MeetingEntryViewModel
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
-private data class ContributionData(
-    val contributorsName: String,
-    val contributionAmt: Int
-)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LogMeetingDataScreen(
@@ -85,17 +70,6 @@ fun LogMeetingDataScreen(
     meetingEntryViewModel: MeetingEntryViewModel = viewModel()
 ){
     val viewModelState by meetingEntryViewModel.uiState.collectAsStateWithLifecycle()
-
-    // Meeting variables
-    val dateOfEntry = viewModelState.datePicked
-    val titleOfMinutes = viewModelState.minutesTitle
-
-    var dropDownMenuExpanded by remember { mutableStateOf(false) }
-    var selectedMember by remember { mutableStateOf("Select a member") }
-    var showDatePicker by remember { mutableStateOf(false) }
-    var datePicked by remember { mutableStateOf<Long?>(null) }
-    var meetingTitle by remember { mutableStateOf("") }
-    var sliderValue by remember { mutableFloatStateOf(0.5f) }
     val contributionsList = remember { mutableStateListOf<ContributionData>() }
     val totalContribution by remember {
         derivedStateOf {
@@ -126,9 +100,10 @@ fun LogMeetingDataScreen(
 
            Box(modifier = Modifier
                .fillMaxWidth()
-               .height(50.dp)){
+               .height(50.dp)
+           ){
                TextField(
-                   value = datePicked?.let { Lib.convertMillisToDate(it) } ?: "",
+                   value = viewModelState.datePicked?.let { Lib.convertMillisToDate(it) } ?: "",
                    onValueChange = { },
                    modifier = Modifier.fillMaxSize(),
                    enabled = false,
@@ -151,19 +126,19 @@ fun LogMeetingDataScreen(
                )
                Box(modifier = Modifier
                    .matchParentSize()
-                   .clickable(true, onClick = { showDatePicker = true }))
+                   .clickable(true, onClick = { meetingEntryViewModel.onChangeDateDialogVisibility(true) }))
            }
 
-           if (showDatePicker) {
+           if (viewModelState.showDatePickerDialog) {
                DatePickerComponent(
-                   onDateSelected = { datePicked = it },
-                   onDismiss = { showDatePicker = false }
+                   onDateSelected = { meetingEntryViewModel.onDateSelectionChanged(it) },
+                   onDismiss = { meetingEntryViewModel.onChangeDateDialogVisibility(false) }
                )
            }
            Text(text = "Meeting Title", fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = Color.Gray)
 
            TextField(
-               value = titleOfMinutes,
+               value = viewModelState.minutesTitle,
                onValueChange = {
                    meetingEntryViewModel.onMinutesTitleChanged(it)
                },
@@ -207,7 +182,7 @@ fun LogMeetingDataScreen(
                modifier = Modifier.fillMaxWidth().height(48.dp)
            ){
                TextField(
-                   value = selectedMember,
+                   value = viewModelState.selectedMember,
                    onValueChange = { },
                    readOnly = true,
                    enabled = false,
@@ -227,11 +202,15 @@ fun LogMeetingDataScreen(
                )
                Box(modifier = Modifier.matchParentSize()
                    .background(Color.Transparent)
-                   .clickable(enabled = true, onClick = { dropDownMenuExpanded = !dropDownMenuExpanded}))
+                   .clickable(enabled = true, onClick = {
+                       meetingEntryViewModel.onChangeDropDownMenuVisibility(!viewModelState.isDropDownMenuExpanded)
+                       }
+                   )
+               )
 
                DropdownMenu(
-                   expanded = dropDownMenuExpanded,
-                   onDismissRequest = { dropDownMenuExpanded = false },
+                   expanded = viewModelState.isDropDownMenuExpanded,
+                   onDismissRequest = { meetingEntryViewModel.onChangeDateDialogVisibility(false) },
                    containerColor = systemFormColor,
                    shape = RoundedCornerShape(12.dp),
                    modifier = Modifier.fillMaxWidth(0.7f)
@@ -240,8 +219,8 @@ fun LogMeetingDataScreen(
                        DropdownMenuItem(
                            text = { Text(member, fontSize = 15.sp, color = Color.DarkGray) },
                            onClick = {
-                               selectedMember = members[index]
-                               dropDownMenuExpanded = false // hide the dropdown once a selection is made
+                               meetingEntryViewModel.setSelectedMember(members[index])
+                               meetingEntryViewModel.onChangeDropDownMenuVisibility(false) // hide the dropdown once a selection is made
                            },
                            contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
                        )
@@ -254,14 +233,14 @@ fun LogMeetingDataScreen(
                verticalAlignment = Alignment.CenterVertically
            ) {
                Text("Contribution", fontSize = 13.sp, color = Color.Gray, fontWeight = FontWeight.SemiBold)
-               Text(text = "Ksh.${sliderValue*100}", fontSize = 13.sp, color = moneyTextColor, fontWeight = FontWeight.SemiBold)
+               Text(text = "Ksh.${viewModelState.sliderValue*100}", fontSize = 13.sp, color = moneyTextColor, fontWeight = FontWeight.SemiBold)
            }
 
            // @ToDo: Proposal: Should this be swapped with a text field? It's low-key difficult to deal with
            Slider(
-               value = sliderValue,
+               value = viewModelState.sliderValue,
                onValueChange = {
-                   sliderValue = it
+                   meetingEntryViewModel.onSliderValueChanged(it)
                },
                valueRange = 50f..200f,
                // ((max - min)/desired_steps (eg. 10))-1
@@ -275,7 +254,7 @@ fun LogMeetingDataScreen(
            )
            Button(
                onClick = {
-                   appendContribution(contributionsList, selectedMember, (sliderValue).toInt())
+                   appendContribution(contributionsList, viewModelState.selectedMember, (viewModelState.sliderValue).toInt())
                },
                shape = RoundedCornerShape(8.dp),
                colors = ButtonDefaults.buttonColors(

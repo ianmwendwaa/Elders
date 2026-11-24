@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.zion.elders.models.MeetingData
 import com.zion.elders.screens.meetings.ContributionsListItem
+import com.zion.elders.ui.theme.cardIconTint
 import com.zion.elders.ui.theme.cardTitle
 import com.zion.elders.ui.theme.experimentalBackground
 import com.zion.elders.ui.theme.moneyBoxColor
@@ -68,7 +69,7 @@ fun OverviewDataCard(
                         painter = painterResource(dataPainterResource),
                         contentDescription = "overview_data_img",
                         modifier = Modifier.size(12.5.dp),
-                        tint = Color(0xFF3A3A3A)
+                        tint = cardIconTint
                     )
                 }
             }

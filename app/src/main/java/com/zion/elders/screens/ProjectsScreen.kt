@@ -45,8 +45,10 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zion.elders.backend.Lib
 import com.zion.elders.components.CircularFloatingActionButton
+import com.zion.elders.components.ProjectCardData
 import com.zion.elders.components.SystemForm
 import com.zion.elders.components.cardColor
 import com.zion.elders.ui.theme.cardTitle
@@ -56,6 +58,7 @@ import com.zion.elders.ui.theme.progressBarTrackColor
 import com.zion.elders.ui.theme.projectOverviewTrackColor
 import kotlinx.coroutines.launch
 import java.util.Locale
+import com.zion.elders.viewmodels.ProjectsViewModel
 
 data class ProjectData(
     val projectTitle: String,
@@ -65,9 +68,12 @@ data class ProjectData(
     val formattedContribution: String get() = NumberFormat.getInstance(Locale.US).format(amountContributed)
     val formattedTarget: String get() = NumberFormat.getInstance(Locale.US).format(projectTarget)
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProjectsScreen(){
+fun ProjectsScreen(
+    projectsViewModel: ProjectsViewModel = viewModel()
+){
     val context = LocalContext.current
     val mockProjectData = listOf(
         ProjectData("Keyboard contribution", 2000.0f, 25000.0f),
@@ -104,7 +110,7 @@ fun ProjectsScreen(){
         Text(text = "Active Projects: (${mockProjectData.size})", color = cardTitle, fontSize = 15.sp, fontWeight = FontWeight.SemiBold,
             modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 5.dp))
         mockProjectData.forEach { projectData ->
-            ProjectData(
+            ProjectCardData(
                 projectData
             )
         }
@@ -161,7 +167,7 @@ fun ProjectsScreen(){
                             shape = RoundedCornerShape(7.dp)
                         )
                         Text(
-                            text = "Project Target (Ksh)",
+                            text = "Project Target (Ksh.)",
                             fontSize = 15.sp,
                             color = Color.Black,
                             fontWeight = FontWeight.SemiBold
@@ -203,9 +209,11 @@ fun ProjectsScreen(){
                             containerColor = experimentalBackground
                         ),
                         shape = RoundedCornerShape(10.dp),
+                        enabled = projectTitle.isNotEmpty() && projectTarget.isNotEmpty(),
                         onClick = {
                             Toast.makeText(context, "Saving project: $projectTitle", Toast.LENGTH_SHORT).show()
                             scope.launch {
+                                projectsViewModel.createProject(context, projectTitle, projectTarget.toDouble())
                                 sheetState.hide()
                             }.invokeOnCompletion {
                                 if (!sheetState.isVisible) {
@@ -257,57 +265,6 @@ fun ProjectCompletionProgress(){
         ) {
             Text(text = "Overall completion", fontSize = 15.sp, color = Color.LightGray)
             Text(text = "${progressSoFar*100}%", fontSize = 14.sp, color = Color.LightGray)
-        }
-    }
-}
-
-@Composable
-fun ProjectData(
-    projectData: ProjectData
-){
-    val projectProgress = projectData.amountContributed / projectData.projectTarget
-    val completionProgress = (projectProgress * 100 == 100.0f)
-    
-    SystemForm(
-        modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 7.dp)
-    ) {
-        Row(modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(text = projectData.projectTitle, fontSize = 15.sp, color = cardTitle, fontWeight = FontWeight.SemiBold)
-            Box(
-                modifier = Modifier.width(65.dp).height(30.dp).clip(RoundedCornerShape(10.dp)).background(
-                    if (completionProgress) moneyBoxColor else Color.Red
-                ),
-                contentAlignment = Alignment.Center
-            ){
-                Text(text = "${projectProgress*100}%", fontSize = 14.sp, fontWeight = FontWeight.SemiBold,
-                    color = if (completionProgress) cardTitle else Color.White
-                )
-            }
-        }
-        LinearProgressIndicator(
-            progress = { projectProgress },
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(20.dp)),
-            color = cardTitle,
-            trackColor = progressBarTrackColor,
-            strokeCap = ProgressIndicatorDefaults.LinearStrokeCap
-        )
-        Row(modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Row {
-                Text(text = "Ksh.${projectData.formattedContribution}", color = cardTitle, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
-                Text(text = " contributed", color = Color.Gray, fontSize = 14.sp, fontWeight = FontWeight.Normal)
-            }
-            Row {
-                Text(text = "Target: ", color = Color.Gray, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
-                Text(text = "Ksh.${projectData.formattedTarget}", color = Color.Gray, fontSize = 15.sp, fontWeight = FontWeight.Normal)
-            }
         }
     }
 }

@@ -1,15 +1,15 @@
 package com.zion.elders.viewmodels
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zion.elders.backend.Lib
-import com.zion.elders.models.member_data.MemberPayload
-import com.zion.elders.resultdump.Result
-import com.zion.elders.transactions.API
+import com.zion.elders.backend.local_database.AppDatabase
+import com.zion.elders.backend.local_database.Member
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -27,7 +27,7 @@ class QuickRegistrationViewModel: ViewModel() {
     private val _uiState = MutableStateFlow(MemberRegistrationFormState())
     val uiState: StateFlow<MemberRegistrationFormState> = _uiState.asStateFlow()
 
-    val api = API()
+//    val api = API()
     fun onFullNameChanged(newText: String){
         _uiState.update { currentState ->
             currentState.copy(
@@ -51,6 +51,9 @@ class QuickRegistrationViewModel: ViewModel() {
     }
 
     fun onRegisterMember(context: Context){
+        val db = AppDatabase.getDatabase(context)
+        val transactionsDao = db.memberDAO()
+
         val (memberName, memberPhoneNumber) = _uiState.value
         val generatedMemberNumber = Lib.generateMemberNumber(memberName, memberPhoneNumber)
         if (memberName.isEmpty() || memberPhoneNumber.isEmpty()){
@@ -63,15 +66,14 @@ class QuickRegistrationViewModel: ViewModel() {
             Toast.makeText(context, "Generated member number: ${Lib.generateMemberNumber(memberName, memberPhoneNumber)}",
                 Toast.LENGTH_SHORT).show()
             viewModelScope.launch {
-                val registrationResult = api.createMember(MemberPayload(
-                    memberInputName = memberName,
-                    memberTelephone = memberPhoneNumber,
-                    memberNumber = generatedMemberNumber
-                ))
-
-                if (registrationResult != Result.SUCCESS) {
-                    _uiState.update { it.copy(errorMessage = "Error registering member $memberName!") }
-                }
+                transactionsDao.registerMember(
+                    Member(
+                        memberName = memberName,
+                        memberTelephone = memberPhoneNumber,
+                        generatedMemberNumber = generatedMemberNumber
+                    )
+                )
+                Log.w("MEMBER_REGISTRATION", "Member $memberName has been registered successfully!")
             }
         }
 

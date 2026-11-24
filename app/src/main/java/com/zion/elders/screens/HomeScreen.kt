@@ -1,10 +1,9 @@
 package com.zion.elders.screens
 
-import android.content.Context
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,10 +19,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Snackbar
-import androidx.compose.material3.SnackbarDefaults
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -30,12 +27,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -52,47 +47,36 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.zion.elders.R
-import com.zion.elders.backend.Lib
-import com.zion.elders.components.MeetingDataCard
 import com.zion.elders.components.OverviewDataCard
 import com.zion.elders.components.SystemForm
-import com.zion.elders.components.systemFormColor
-import com.zion.elders.models.MeetingContributionsBreakdown
-import com.zion.elders.models.MeetingData
+import com.zion.elders.components.nonMonetaryBoxColor
+import com.zion.elders.ui.theme.cardIconTint
 import com.zion.elders.ui.theme.cardTitle
 import com.zion.elders.ui.theme.disabledButtonColor
 import com.zion.elders.ui.theme.experimentalBackground
-import com.zion.elders.viewmodels.HomeOverviewViewModel
+import com.zion.elders.viewmodels.HomeScreenViewModel
 import com.zion.elders.viewmodels.QuickRegistrationViewModel
-import kotlinx.coroutines.launch
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 @Composable
 fun HomeScreen(
     navController: NavController,
     registrationViewModel: QuickRegistrationViewModel = viewModel(),
-    overviewDataViewModel: HomeOverviewViewModel = viewModel(),
+    overviewDataViewModel: HomeScreenViewModel = viewModel(),
     onErrorOccurred: (String) -> Unit
 ){
     val overviewDataState by overviewDataViewModel.uiState.collectAsStateWithLifecycle()
     val registrationFormState by registrationViewModel.uiState.collectAsStateWithLifecycle()
-    val totalMembers = overviewDataState.totalMembers
     val totalContribution by remember { mutableIntStateOf(overviewDataViewModel.getNetContributions() ) }
 
     val context = LocalContext.current
 
-    val dummyMeetingData = MeetingData(
-        "First meeting",
-        LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
-        750,
-        listOf(
-            MeetingContributionsBreakdown("Ian Mwendwa", 50),
-            MeetingContributionsBreakdown("Ian Mwendwa", 50),
-            MeetingContributionsBreakdown("Ian Mwendwa", 50)
-        ),
-        "Some emerging issues as discussed"
-    )
+    LaunchedEffect(Unit) {
+        overviewDataViewModel.getTotalMembers(context = context)
+        overviewDataViewModel.getAllMembers(context = context)
+    }
+    val members = overviewDataState.registeredMembers
+    val totalMembers = overviewDataState.totalMembers
+
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
 
@@ -103,7 +87,7 @@ fun HomeScreen(
     Column(
         modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
     ) {
-        Text(text = "Hello Mwanazayuni!", fontSize = 19.sp, fontWeight = FontWeight.Bold,modifier = Modifier.padding(start = 16.dp, top = 20.dp, end = 16.dp),
+        Text(text = "Hello Zion Elders!", fontSize = 19.sp, fontWeight = FontWeight.Bold,modifier = Modifier.padding(start = 16.dp, top = 20.dp, end = 16.dp),
             color = Color.Black
         )
 
@@ -218,9 +202,49 @@ fun HomeScreen(
         Row(modifier = Modifier.fillMaxWidth().padding(
             start = 16.dp, end = 16.dp, bottom = 1.dp, top = 10.dp
         ), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text(text = "Recent meetings", color = cardTitle, fontWeight = FontWeight.SemiBold)
+            Text(text = "View members", color = cardTitle, fontWeight = FontWeight.SemiBold)
             Text(text = "See all", color = experimentalBackground, fontSize = 13.5.sp)
         }
-        MeetingDataCard(dummyMeetingData)
+        members.take(3).forEach { member ->
+            MemberDataCard(
+                member.memberName,
+                member.memberTelephone,
+                member.generatedMemberNumber
+            )
+        }
+    }
+}
+
+@Composable
+fun MemberDataCard(
+    name: String,
+    phoneNumber: String,
+    memberNumber: String
+){
+    SystemForm(
+        modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 5.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(5.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier.size(32.dp).clip(RoundedCornerShape(100.dp))
+                    .background(nonMonetaryBoxColor),
+                contentAlignment = Alignment.Center
+            ){
+                Icon(
+                    painter = painterResource(R.drawable.group_filled),
+                    contentDescription = "member_drawing",
+                    tint = cardIconTint
+                )
+            }
+            Column {
+                Text(text = name, fontWeight = FontWeight.Bold, fontSize = 17.sp)
+                Text(text = phoneNumber, fontWeight = FontWeight.SemiBold, fontSize = 14.sp, color = Color.Gray)
+                Text(text = memberNumber, fontWeight = FontWeight.SemiBold, fontSize = 14.sp, color = Color.Gray)
+            }
+        }
     }
 }
