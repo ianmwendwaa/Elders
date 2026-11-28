@@ -1,4 +1,4 @@
-package com.zion.elders.viewmodels
+package com.zion.elders.viewmodels.registration
 
 import android.content.Context
 import android.util.Log
@@ -7,9 +7,9 @@ import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.zion.elders.backend.Lib
-import com.zion.elders.backend.local_database.AppDatabase
-import com.zion.elders.backend.local_database.Member
+import com.zion.core.dto.Member
+import com.zion.core.local_database.AppDatabase
+import com.zion.core.utils.Lib
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

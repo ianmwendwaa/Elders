@@ -1,4 +1,4 @@
-package com.zion.elders.components
+package com.zion.elders.components.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

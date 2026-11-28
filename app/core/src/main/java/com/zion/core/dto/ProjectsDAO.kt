@@ -1,4 +1,4 @@
-package com.zion.elders.backend.local_database
+package com.zion.core.dto
 
 import androidx.room3.Dao
 import androidx.room3.Insert

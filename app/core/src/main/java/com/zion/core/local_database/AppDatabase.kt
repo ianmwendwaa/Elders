@@ -1,4 +1,4 @@
-package com.zion.elders.backend.local_database
+package com.zion.core.local_database
 
 import android.content.Context
 import androidx.room3.Database
@@ -6,6 +6,11 @@ import androidx.room3.Room
 import androidx.room3.RoomDatabase
 import androidx.room3.migration.Migration
 import androidx.sqlite.SQLiteConnection
+import com.zion.core.dto.Meeting
+import com.zion.core.dto.Member
+import com.zion.core.dto.MemberDAO
+import com.zion.core.dto.Project
+import com.zion.core.dto.ProjectsDAO
 
 @Database(entities = [Member::class, Meeting::class, Project::class], version = 1, autoMigrations = [], exportSchema = false)
 abstract class AppDatabase: RoomDatabase() {

@@ -29,8 +29,8 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.zion.elders.components.BackButton
-import com.zion.elders.components.SystemForm
+import com.zion.elders.components.common.BackButton
+import com.zion.elders.components.common.SystemForm
 import com.zion.elders.components.backgroundColor
 import com.zion.elders.components.cardColor
 import com.zion.elders.components.minutes.PillButton

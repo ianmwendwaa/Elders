@@ -25,7 +25,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.zion.elders.R
-import com.zion.elders.components.SystemForm
+import com.zion.elders.components.common.SystemForm
 import com.zion.elders.components.minutes.CustomTextFieldForm
 import com.zion.elders.components.minutes.TextFormattingFeature
 import com.zion.elders.ui.theme.disabledButtonColor

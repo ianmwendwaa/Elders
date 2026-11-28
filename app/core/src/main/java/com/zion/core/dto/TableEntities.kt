@@ -1,8 +1,8 @@
-package com.zion.elders.backend.local_database
+package com.zion.core.dto
 
-import android.icu.text.NumberFormat
 import androidx.room3.Entity
 import androidx.room3.PrimaryKey
+import java.text.NumberFormat
 import java.util.Locale
 
 @Entity("zion_elders_table")

@@ -47,15 +47,15 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.zion.elders.R
-import com.zion.elders.components.OverviewDataCard
-import com.zion.elders.components.SystemForm
+import com.zion.elders.components.home.OverviewDataCard
+import com.zion.elders.components.common.SystemForm
 import com.zion.elders.components.nonMonetaryBoxColor
 import com.zion.elders.ui.theme.cardIconTint
 import com.zion.elders.ui.theme.cardTitle
 import com.zion.elders.ui.theme.disabledButtonColor
 import com.zion.elders.ui.theme.experimentalBackground
-import com.zion.elders.viewmodels.HomeScreenViewModel
-import com.zion.elders.viewmodels.QuickRegistrationViewModel
+import com.zion.elders.viewmodels.home.HomeScreenViewModel
+import com.zion.elders.viewmodels.registration.QuickRegistrationViewModel
 
 @Composable
 fun HomeScreen(
@@ -71,11 +71,10 @@ fun HomeScreen(
     val context = LocalContext.current
 
     LaunchedEffect(Unit) {
-        overviewDataViewModel.getTotalMembers(context = context)
         overviewDataViewModel.getAllMembers(context = context)
     }
     val members = overviewDataState.registeredMembers
-    val totalMembers = overviewDataState.totalMembers
+    val totalMembers = members.size
 
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current

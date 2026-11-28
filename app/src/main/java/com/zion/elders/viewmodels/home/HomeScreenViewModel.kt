@@ -1,12 +1,10 @@
-package com.zion.elders.viewmodels
+package com.zion.elders.viewmodels.home
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.zion.elders.backend.local_database.AppDatabase
-import com.zion.elders.backend.local_database.Member
-import com.zion.elders.transactions.API
+import com.zion.core.dto.Member
+import com.zion.core.local_database.AppDatabase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -25,22 +23,6 @@ class HomeScreenViewModel: ViewModel() {
     private val _uiState = MutableStateFlow(OverviewDataState())
     val uiState: StateFlow<OverviewDataState> = _uiState.asStateFlow()
 
-    val api = API()
-
-
-    fun getTotalMembers(context: Context) {
-        Log.w("MEMBER_SIZE_COUNT", "Attempting to retrieve member count...")
-        viewModelScope.launch {
-            val transactionsDao = AppDatabase.getDatabase(context).memberDAO()
-            val allMembers = transactionsDao.getAllMembers()
-
-            _uiState.update {
-                it.copy(
-                    totalMembers = allMembers.size
-                )
-            }
-        }
-    }
     fun getNetContributions(): Int {
         _uiState.update {
             it.copy(netContributions = 1700)

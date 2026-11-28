@@ -15,7 +15,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
-import com.zion.elders.components.BottomNavBar
+import com.zion.elders.components.common.BottomNavBar
 import com.zion.elders.components.backgroundColor
 import com.zion.elders.models.AppTab
 import com.zion.elders.screens.meetings.MeetingsScreen
@@ -28,8 +28,6 @@ fun MainScreen(navController: NavHostController){
 
     val snackbarHostState by remember { mutableStateOf(SnackbarHostState()) }
     val scope = rememberCoroutineScope()
-
-
 
     Scaffold(
         containerColor = backgroundColor,

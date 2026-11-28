@@ -20,7 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.zion.elders.components.MeetingDataCard
+import com.zion.elders.components.home.MeetingDataCard
 import com.zion.elders.models.MeetingContributionsBreakdown
 import com.zion.elders.models.MeetingData
 import com.zion.elders.navigation.ROUTE_CREATE_MEETING_ENTRY

@@ -1,4 +1,4 @@
-package com.zion.elders.components
+package com.zion.elders.components.projectsscreen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -20,8 +20,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.zion.elders.backend.local_database.Project
-import com.zion.elders.models.projects_data.ProjectData
+import com.zion.core.dto.Project
+import com.zion.elders.components.common.SystemForm
 import com.zion.elders.ui.theme.cardTitle
 import com.zion.elders.ui.theme.errorOrPendingColor
 import com.zion.elders.ui.theme.moneyBoxColor
@@ -37,22 +37,33 @@ fun ProjectCardData(
     SystemForm(
         modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 7.dp)
     ) {
-        Row(modifier = Modifier.fillMaxWidth(),
+        Row(
+            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = projectData.projectTitle, fontSize = 15.sp, color = cardTitle, fontWeight = FontWeight.SemiBold)
+            Text(
+                text = projectData.projectTitle,
+                fontSize = 15.sp,
+                color = cardTitle,
+                fontWeight = FontWeight.SemiBold
+            )
             Box(
-                modifier = Modifier.width(65.dp).height(30.dp).clip(RoundedCornerShape(10.dp)).background(
-                    if (completionProgress) moneyBoxColor else errorOrPendingColor
-                ),
+                modifier = Modifier.width(65.dp).height(30.dp).clip(RoundedCornerShape(10.dp))
+                    .background(
+                        if (completionProgress) moneyBoxColor else errorOrPendingColor
+                    ),
                 contentAlignment = Alignment.Center
-            ){
-                Text(text = "${projectProgress*100}%", fontSize = 14.sp, fontWeight = FontWeight.SemiBold,
+            ) {
+                Text(
+                    text = "${projectProgress * 100}%",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
                     color = if (completionProgress) cardTitle else Color.White
                 )
             }
         }
+
         LinearProgressIndicator(
             progress = { projectProgress.toFloat() },
             modifier = Modifier
@@ -62,17 +73,38 @@ fun ProjectCardData(
             trackColor = progressBarTrackColor,
             strokeCap = ProgressIndicatorDefaults.LinearStrokeCap
         )
-        Row(modifier = Modifier.fillMaxWidth(),
+        Row(
+            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Row {
-                Text(text = "Ksh.${projectData.formattedContribution}", color = cardTitle, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
-                Text(text = " contributed", color = Color.Gray, fontSize = 14.sp, fontWeight = FontWeight.Normal)
+                Text(
+                    text = "Ksh.${projectData.formattedContribution}",
+                    color = cardTitle,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Text(
+                    text = " contributed",
+                    color = Color.Gray,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Normal
+                )
             }
             Row {
-                Text(text = "Target: ", color = Color.Gray, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
-                Text(text = "Ksh.${projectData.formattedTarget}", color = Color.Gray, fontSize = 15.sp, fontWeight = FontWeight.Normal)
+                Text(
+                    text = "Target: ",
+                    color = Color.Gray,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Text(
+                    text = "Ksh.${projectData.formattedTarget}",
+                    color = Color.Gray,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Normal
+                )
             }
         }
     }

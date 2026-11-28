@@ -49,10 +49,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.zion.core.utils.Lib
 import com.zion.elders.R
-import com.zion.elders.backend.Lib
-import com.zion.elders.components.DatePickerComponent
-import com.zion.elders.components.SystemForm
+import com.zion.elders.components.common.DatePickerComponent
+import com.zion.elders.components.common.SystemForm
 import com.zion.elders.components.backgroundColor
 import com.zion.elders.components.cardColor
 import com.zion.elders.components.systemFormColor
@@ -60,8 +60,8 @@ import com.zion.elders.navigation.ROUTE_MINUTES_SCREEN
 import com.zion.elders.ui.theme.cardTitle
 import com.zion.elders.ui.theme.experimentalBackground
 import com.zion.elders.ui.theme.moneyTextColor
-import com.zion.elders.viewmodels.ContributionData
-import com.zion.elders.viewmodels.MeetingEntryViewModel
+import com.zion.elders.viewmodels.meetinglog.ContributionData
+import com.zion.elders.viewmodels.meetinglog.MeetingEntryViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

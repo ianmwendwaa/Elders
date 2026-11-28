@@ -1,7 +1,7 @@
 package com.zion.elders.viewmodels.minuteseditor
 
 import androidx.lifecycle.ViewModel
-import com.zion.elders.backend.Lib
+import com.zion.core.utils.Lib
 import com.zion.elders.models.EditorMode
 import com.zion.elders.screens.minutes.MinutesDataSource
 import kotlinx.coroutines.flow.MutableStateFlow

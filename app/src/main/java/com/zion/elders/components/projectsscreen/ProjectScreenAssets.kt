@@ -40,14 +40,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.zion.elders.backend.Lib
-import com.zion.elders.components.SystemForm
+import com.zion.core.utils.Lib
+import com.zion.elders.components.common.SystemForm
 import com.zion.elders.components.cardColor
 import com.zion.elders.ui.theme.cardTitle
 import com.zion.elders.ui.theme.experimentalBackground
 import com.zion.elders.ui.theme.progressBarTrackColor
 import com.zion.elders.ui.theme.projectOverviewTrackColor
-import com.zion.elders.viewmodels.ProjectsViewModel
+import com.zion.elders.viewmodels.projects.ProjectsViewModel
 import kotlinx.coroutines.launch
 import java.util.Locale
 

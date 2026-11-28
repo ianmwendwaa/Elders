@@ -22,12 +22,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.zion.elders.components.CircularFloatingActionButton
-import com.zion.elders.components.ProjectCardData
+import com.zion.elders.components.common.CircularFloatingActionButton
+import com.zion.elders.components.projectsscreen.ProjectCardData
 import com.zion.elders.components.projectsscreen.CreateProjectBottomSheet
 import com.zion.elders.components.projectsscreen.ProjectCompletionProgress
 import com.zion.elders.ui.theme.cardTitle
-import com.zion.elders.viewmodels.ProjectsViewModel
+import com.zion.elders.viewmodels.projects.ProjectsViewModel
 
 @Composable
 fun ProjectsScreen(

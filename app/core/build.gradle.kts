@@ -1,7 +1,7 @@
 plugins {
-    id("java-library")
-    alias(libs.plugins.jetbrains.kotlin.jvm)
-    id("org.jetbrains.kotlin.plugin.serialization") version "2.4.21"
+    id("com.android.library")
+    id("org.jetbrains.kotlin.plugin.serialization")
+    id("com.google.devtools.ksp")
 }
 java {
     sourceCompatibility = JavaVersion.VERSION_11
@@ -13,6 +13,10 @@ kotlin {
     }
 }
 
+android {
+    namespace = "com.zion.core"
+    compileSdk = 37
+}
 dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.exposed.core)
@@ -21,4 +25,10 @@ dependencies {
     implementation(libs.hikaricp)
     implementation(libs.dotenv.java)
     implementation(libs.mysql.connector.j)
+    implementation(ktorLibs.client.core)
+    implementation(ktorLibs.client.cio)
+    implementation(ktorLibs.serialization.kotlinx.json)
+    implementation(ktorLibs.client.contentNegotiation)
+    implementation(libs.androidx.room3.runtime)
+    ksp(libs.androidx.room3.compiler)
 }

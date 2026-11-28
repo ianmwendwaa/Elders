@@ -1,13 +1,10 @@
-package com.zion.elders.viewmodels
+package com.zion.elders.viewmodels.projects
 
 import android.content.Context
-import androidx.compose.runtime.derivedStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.test.core.app.ApplicationProvider
-import com.zion.elders.backend.local_database.AppDatabase
-import com.zion.elders.backend.local_database.Project
-import com.zion.elders.models.projects_data.ProjectData
+import com.zion.core.dto.Project
+import com.zion.core.local_database.AppDatabase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -33,18 +30,7 @@ class ProjectsViewModel: ViewModel() {
     private val _projectCreationState = MutableStateFlow(ProjectCreationState())
     val projectCreationState = _projectCreationState.asStateFlow()
 
-
-
-    fun onGetContext(context: Context = ApplicationProvider.getApplicationContext()): Context{
-        return context
-    }
-
     fun getActiveProjects(context: Context) {
-        val mockProjectData = listOf(
-            ProjectData("Keyboard contribution", 2000.0, 25000.0),
-            ProjectData("Gas for Mtumishi", 2350.0, 2350.0),
-            ProjectData("Sound systems", 150.0, 15000.0)
-        )
         val pDao = AppDatabase.getDatabase(context).projectsDAO()
         viewModelScope.launch {
             val registeredProjects = pDao.getAllProjects()

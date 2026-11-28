@@ -18,7 +18,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.zion.elders.components.SystemForm
+import com.zion.elders.components.common.SystemForm
 import com.zion.elders.components.cardColor
 import com.zion.elders.components.minutes.CustomTextFieldForm
 import com.zion.elders.components.minutes.FullPreviewLabel

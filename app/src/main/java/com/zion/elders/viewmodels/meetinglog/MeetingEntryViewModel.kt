@@ -1,4 +1,4 @@
-package com.zion.elders.viewmodels
+package com.zion.elders.viewmodels.meetinglog
 
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

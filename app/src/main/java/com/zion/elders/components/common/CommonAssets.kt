@@ -1,6 +1,5 @@
 // Reusable project assets
-
-package com.zion.elders.components
+package com.zion.elders.components.common
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -34,6 +33,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.zion.elders.R
+import com.zion.elders.components.nonMonetaryBoxColor
+import com.zion.elders.components.systemFormColor
 import com.zion.elders.models.AppTab
 
 @Composable
