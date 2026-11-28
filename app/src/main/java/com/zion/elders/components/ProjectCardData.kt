@@ -20,7 +20,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.zion.elders.screens.ProjectData
+import com.zion.elders.backend.local_database.Project
+import com.zion.elders.models.projects_data.ProjectData
 import com.zion.elders.ui.theme.cardTitle
 import com.zion.elders.ui.theme.errorOrPendingColor
 import com.zion.elders.ui.theme.moneyBoxColor
@@ -28,10 +29,10 @@ import com.zion.elders.ui.theme.progressBarTrackColor
 
 @Composable
 fun ProjectCardData(
-    projectData: ProjectData
+    projectData: Project
 ){
-    val projectProgress = projectData.amountContributed / projectData.projectTarget
-    val completionProgress = (projectProgress * 100 == 100.0f)
+    val projectProgress = 10 / projectData.projectTarget
+    val completionProgress = (projectProgress * 100 == 100.0)
 
     SystemForm(
         modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 7.dp)
@@ -53,7 +54,7 @@ fun ProjectCardData(
             }
         }
         LinearProgressIndicator(
-            progress = { projectProgress },
+            progress = { projectProgress.toFloat() },
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(20.dp)),

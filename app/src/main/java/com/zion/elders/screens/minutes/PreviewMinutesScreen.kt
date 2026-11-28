@@ -2,39 +2,35 @@ package com.zion.elders.screens.minutes
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.zion.elders.backend.Lib
 import com.zion.elders.components.SystemForm
 import com.zion.elders.components.cardColor
-import com.zion.elders.ui.theme.experimentalBackground
-import com.zion.elders.ui.theme.previewBoxColor
+import com.zion.elders.components.minutes.CustomTextFieldForm
+import com.zion.elders.components.minutes.FullPreviewLabel
+import com.zion.elders.viewmodels.minuteseditor.EditorData
 
 @Composable
 fun PreviewMinutesScreen(
-    text: String
+    minutes: String,
+    managerViewModelState: EditorData
 ){
-    val dateToday = Lib.getCurrentDate()
-    val totalWordCount = "x"
+    val dateToday = managerViewModelState.dateOfLogging
+    val totalWordCount = managerViewModelState.numberOfWords
 
     SystemForm(
         modifier = Modifier
@@ -65,7 +61,7 @@ fun PreviewMinutesScreen(
                     fontWeight = FontWeight.SemiBold
                 )
                 Text(
-                    text = totalWordCount,
+                    text = totalWordCount.toString(),
                     fontSize = 14.sp,
                     color = Color.Gray,
                     fontWeight = FontWeight.Medium
@@ -82,7 +78,7 @@ fun PreviewMinutesScreen(
 
     CustomTextFieldForm {
         TextField(
-            value = text.ifBlank { "No minutes logged yet." },
+            value = minutes.ifBlank { "No minutes logged yet." },
             onValueChange = {},
             modifier = Modifier.fillMaxWidth().height(500.dp),
             enabled = false,
@@ -96,26 +92,5 @@ fun PreviewMinutesScreen(
                 lineHeight = 22.sp
             )
         )
-    }
-}
-
-@Composable
-fun FullPreviewLabel(){
-    Box(
-        modifier = Modifier.width(95.dp).height(35.dp).clip(RoundedCornerShape(13.dp))
-            .background(previewBoxColor),
-        contentAlignment = Alignment.Center
-    ) {
-        Row(
-            Modifier.fillMaxWidth().padding(3.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            // Circle
-            Box(modifier = Modifier.size(15.dp).clip(RoundedCornerShape(80.dp)).background(
-                experimentalBackground
-            ))
-            Text(text = "Preview", fontSize = 13.sp, color = Color.White, fontWeight = FontWeight.SemiBold)
-        }
     }
 }

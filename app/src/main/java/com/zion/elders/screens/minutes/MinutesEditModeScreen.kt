@@ -16,10 +16,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,18 +25,22 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.zion.elders.R
-import com.zion.elders.backend.Lib
 import com.zion.elders.components.SystemForm
+import com.zion.elders.components.minutes.CustomTextFieldForm
+import com.zion.elders.components.minutes.TextFormattingFeature
 import com.zion.elders.ui.theme.disabledButtonColor
 import com.zion.elders.ui.theme.experimentalBackground
+import com.zion.elders.viewmodels.minuteseditor.EditorData
 
 @Composable
 fun MinutesEditModeScreen(
-    text: String,
-    onMinutesUpdated: (String) -> Unit
+    minutes: String,
+    onMinutesUpdated: (String) -> Unit,
+    managerViewModelState: EditorData,
 ){
-    var wordCount by remember { mutableIntStateOf(0) }
-    val dateToday = Lib.getCurrentDate()
+    val wordCount = managerViewModelState.numberOfWords
+    val dateToday = managerViewModelState.dateOfLogging
+
     SystemForm(
         modifier = Modifier.padding(start = 8.dp, end = 8.dp)
     ) {
@@ -99,7 +99,7 @@ fun MinutesEditModeScreen(
     // This was originally a SystemForm, but I didn't like its padding in this particular section
     CustomTextFieldForm {
         TextField(
-            value = text,
+            value = minutes,
             onValueChange = onMinutesUpdated,
             modifier = Modifier
                 .fillMaxWidth()
@@ -122,9 +122,11 @@ fun MinutesEditModeScreen(
             )
         )
         Button(
-            onClick = {},
+            onClick = {
+
+            },
             shape = RoundedCornerShape(8.dp),
-            enabled = text.isNotEmpty(),
+            enabled = minutes.isNotEmpty(),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 16.dp, end = 16.dp, bottom = 20.dp),

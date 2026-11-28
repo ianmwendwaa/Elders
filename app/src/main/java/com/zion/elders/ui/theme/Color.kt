@@ -24,5 +24,5 @@ val previewBoxColor = Color(0xFFE0CFB9)
 val progressBarTrackColor = Color(0xFFECE2D2)
 
 val projectOverviewTrackColor = Color(0xFFA4F6BD)
-val errorOrPendingColor = Color(0xFFFF3C3C)
+val errorOrPendingColor = Color(0xFFFF7F7F)
 val cardIconTint = Color(0xFF3A3A3A)

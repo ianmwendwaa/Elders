@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -33,7 +32,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.zion.elders.R
 import com.zion.elders.models.AppTab
@@ -113,7 +111,7 @@ fun BottomNavBar(
                 },
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = Color.White,
-                    indicatorColor = deepEmerald,          // Active emerald pill behind icon
+                    indicatorColor = deepEmerald,
                     selectedTextColor = deepEmerald,
                     unselectedIconColor = mutedBrown,
                     unselectedTextColor = espressoText.copy(alpha = 0.75f)
